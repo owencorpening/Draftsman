@@ -1,0 +1,299 @@
+{
+  "recordedAt": "2026-11-25",
+  "note": "Live response from Openverse, recorded with scripts/record.ts.",
+  "request": {
+    "method": "GET",
+    "url": "https://api.openverse.org/v1/images/?q=lighthouse&page_size=5&mature=false"
+  },
+  "response": {
+    "status": 200,
+    "contentType": "application/json",
+    "body": {
+      "result_count": 240,
+      "page_count": 48,
+      "page_size": 5,
+      "page": 1,
+      "results": [
+        {
+          "id": "ca2f84d6-b8e1-42d5-b269-2ea488282840",
+          "title": "Wollongong Breakwater Lighthouse",
+          "indexed_on": "2020-04-17T06:40:21.338837Z",
+          "foreign_landing_url": "https://www.flickr.com/photos/53368913@N05/6038356446",
+          "url": "https://live.staticflickr.com/6149/6038356446_164f13867f_b.jpg",
+          "creator": "Pandora's Perspective",
+          "creator_url": "https://www.flickr.com/photos/53368913@N05",
+          "license": "by-nc-sa",
+          "license_version": "2.0",
+          "license_url": "https://creativecommons.org/licenses/by-nc-sa/2.0/",
+          "provider": "flickr",
+          "source": "flickr",
+          "category": null,
+          "filesize": null,
+          "filetype": null,
+          "tags": [
+            {
+              "name": "lighthouse",
+              "accuracy": null,
+              "unstable__provider": "flickr"
+            },
+            {
+              "name": "odc",
+              "accuracy": null,
+              "unstable__provider": "flickr"
+            }
+          ],
+          "attribution": "\"Wollongong Breakwater Lighthouse\" by Pandora's Perspective is licensed under CC BY-NC-SA 2.0. To view a copy of this license, visit https://creativecommons.org/licenses/by-nc-sa/2.0/.",
+          "fields_matched": [
+            "description",
+            "title",
+            "tags.name"
+          ],
+          "mature": false,
+          "height": 683,
+          "width": 1024,
+          "thumbnail": "https://api.openverse.org/v1/images/ca2f84d6-b8e1-42d5-b269-2ea488282840/thumb/",
+          "detail_url": "https://api.openverse.org/v1/images/ca2f84d6-b8e1-42d5-b269-2ea488282840/",
+          "related_url": "https://api.openverse.org/v1/images/ca2f84d6-b8e1-42d5-b269-2ea488282840/related/",
+          "unstable__sensitivity": []
+        },
+        {
+          "id": "f7ccade7-4807-40d7-a116-e4ab0a314639",
+          "title": "Lighthouse",
+          "indexed_on": "2020-04-04T22:54:22.978971Z",
+          "foreign_landing_url": "https://www.flickr.com/photos/36053919@N02/14962295372",
+          "url": "https://live.staticflickr.com/5554/14962295372_4dc7e72138_b.jpg",
+          "creator": "ErikLevin",
+          "creator_url": "https://www.flickr.com/photos/36053919@N02",
+          "license": "by-nc",
+          "license_version": "2.0",
+          "license_url": "https://creativecommons.org/licenses/by-nc/2.0/",
+          "provider": "flickr",
+          "source": "flickr",
+          "category": null,
+          "filesize": null,
+          "filetype": null,
+          "tags": [
+            {
+              "name": "building",
+              "accuracy": null,
+              "unstable__provider": "flickr"
+            },
+            {
+              "name": "lighthouse",
+              "accuracy": null,
+              "unstable__provider": "flickr"
+            },
+            {
+              "name": "town",
+              "accuracy": null,
+              "unstable__provider": "flickr"
+            }
+          ],
+          "attribution": "\"Lighthouse\" by ErikLevin is licensed under CC BY-NC 2.0. To view a copy of this license, visit https://creativecommons.org/licenses/by-nc/2.0/.",
+          "fields_matched": [
+            "description",
+            "title",
+            "tags.name"
+          ],
+          "mature": false,
+          "height": 664,
+          "width": 1024,
+          "thumbnail": "https://api.openverse.org/v1/images/f7ccade7-4807-40d7-a116-e4ab0a314639/thumb/",
+          "detail_url": "https://api.openverse.org/v1/images/f7ccade7-4807-40d7-a116-e4ab0a314639/",
+          "related_url": "https://api.openverse.org/v1/images/f7ccade7-4807-40d7-a116-e4ab0a314639/related/",
+          "unstable__sensitivity": []
+        },
+        {
+          "id": "94f51e61-f870-47f7-bdec-49cd2eb5f173",
+          "title": "Lighthouse",
+          "indexed_on": "2018-11-09T02:22:56.756031Z",
+          "foreign_landing_url": "https://www.flickr.com/photos/50276595@N03/8486376375",
+          "url": "https://live.staticflickr.com/8530/8486376375_6ba6d387a8_b.jpg",
+          "creator": "Kenneth Moore Photography",
+          "creator_url": "https://www.flickr.com/photos/50276595@N03",
+          "license": "by",
+          "license_version": "2.0",
+          "license_url": "https://creativecommons.org/licenses/by/2.0/",
+          "provider": "flickr",
+          "source": "flickr",
+          "category": null,
+          "filesize": null,
+          "filetype": null,
+          "tags": [
+            {
+              "name": "lighthouse",
+              "accuracy": null,
+              "unstable__provider": "flickr"
+            },
+            {
+              "name": "longbeach",
+              "accuracy": null,
+              "unstable__provider": "flickr"
+            }
+          ],
+          "attribution": "\"Lighthouse\" by Kenneth Moore Photography is licensed under CC BY 2.0. To view a copy of this license, visit https://creativecommons.org/licenses/by/2.0/.",
+          "fields_matched": [
+            "title",
+            "tags.name"
+          ],
+          "mature": false,
+          "height": 1000,
+          "width": 664,
+          "thumbnail": "https://api.openverse.org/v1/images/94f51e61-f870-47f7-bdec-49cd2eb5f173/thumb/",
+          "detail_url": "https://api.openverse.org/v1/images/94f51e61-f870-47f7-bdec-49cd2eb5f173/",
+          "related_url": "https://api.openverse.org/v1/images/94f51e61-f870-47f7-bdec-49cd2eb5f173/related/",
+          "unstable__sensitivity": []
+        },
+        {
+          "id": "e9e5abc8-43bf-4e54-83e8-802e889f4f3c",
+          "title": "Up the Lighthouse 2",
+          "indexed_on": "2020-04-03T10:48:30.008882Z",
+          "foreign_landing_url": "https://www.flickr.com/photos/8628862@N05/13805504034",
+          "url": "https://live.staticflickr.com/5013/13805504034_467e4e90cd_b.jpg",
+          "creator": "MTSOfan",
+          "creator_url": "https://www.flickr.com/photos/8628862@N05",
+          "license": "by-nc-sa",
+          "license_version": "2.0",
+          "license_url": "https://creativecommons.org/licenses/by-nc-sa/2.0/",
+          "provider": "flickr",
+          "source": "flickr",
+          "category": null,
+          "filesize": null,
+          "filetype": null,
+          "tags": [
+            {
+              "name": "assateagueisland",
+              "accuracy": null,
+              "unstable__provider": "flickr"
+            },
+            {
+              "name": "chincoteaguenationalwildliferefuge",
+              "accuracy": null,
+              "unstable__provider": "flickr"
+            },
+            {
+              "name": "lighthouse",
+              "accuracy": null,
+              "unstable__provider": "flickr"
+            },
+            {
+              "name": "virginia",
+              "accuracy": null,
+              "unstable__provider": "flickr"
+            }
+          ],
+          "attribution": "\"Up the Lighthouse 2\" by MTSOfan is licensed under CC BY-NC-SA 2.0. To view a copy of this license, visit https://creativecommons.org/licenses/by-nc-sa/2.0/.",
+          "fields_matched": [
+            "description",
+            "title",
+            "tags.name"
+          ],
+          "mature": false,
+          "height": 683,
+          "width": 1024,
+          "thumbnail": "https://api.openverse.org/v1/images/e9e5abc8-43bf-4e54-83e8-802e889f4f3c/thumb/",
+          "detail_url": "https://api.openverse.org/v1/images/e9e5abc8-43bf-4e54-83e8-802e889f4f3c/",
+          "related_url": "https://api.openverse.org/v1/images/e9e5abc8-43bf-4e54-83e8-802e889f4f3c/related/",
+          "unstable__sensitivity": []
+        },
+        {
+          "id": "9569187e-5b4e-46aa-8864-f00f89d337ca",
+          "title": "Cuckolds Lighthouse, ME",
+          "indexed_on": "2019-04-23T15:13:28.647580Z",
+          "foreign_landing_url": "https://www.flickr.com/photos/8752845@N04/5769029218",
+          "url": "https://live.staticflickr.com/5070/5769029218_f57c556429_b.jpg",
+          "creator": "hatchski",
+          "creator_url": "https://www.flickr.com/photos/8752845@N04",
+          "license": "by-nc-nd",
+          "license_version": "2.0",
+          "license_url": "https://creativecommons.org/licenses/by-nc-nd/2.0/",
+          "provider": "flickr",
+          "source": "flickr",
+          "category": null,
+          "filesize": null,
+          "filetype": null,
+          "tags": [
+            {
+              "name": "atlantic",
+              "accuracy": null,
+              "unstable__provider": "flickr"
+            },
+            {
+              "name": "beach",
+              "accuracy": null,
+              "unstable__provider": "flickr"
+            },
+            {
+              "name": "coast",
+              "accuracy": null,
+              "unstable__provider": "flickr"
+            },
+            {
+              "name": "cuckolds",
+              "accuracy": null,
+              "unstable__provider": "flickr"
+            },
+            {
+              "name": "fog",
+              "accuracy": null,
+              "unstable__provider": "flickr"
+            },
+            {
+              "name": "light",
+              "accuracy": null,
+              "unstable__provider": "flickr"
+            },
+            {
+              "name": "lighthouse",
+              "accuracy": null,
+              "unstable__provider": "flickr"
+            },
+            {
+              "name": "lighthouses",
+              "accuracy": null,
+              "unstable__provider": "flickr"
+            },
+            {
+              "name": "maine",
+              "accuracy": null,
+              "unstable__provider": "flickr"
+            },
+            {
+              "name": "me",
+              "accuracy": null,
+              "unstable__provider": "flickr"
+            },
+            {
+              "name": "ocean",
+              "accuracy": null,
+              "unstable__provider": "flickr"
+            },
+            {
+              "name": "rain",
+              "accuracy": null,
+              "unstable__provider": "flickr"
+            },
+            {
+              "name": "sea",
+              "accuracy": null,
+              "unstable__provider": "flickr"
+            }
+          ],
+          "attribution": "\"Cuckolds Lighthouse, ME\" by hatchski is licensed under CC BY-NC-ND 2.0. To view a copy of this license, visit https://creativecommons.org/licenses/by-nc-nd/2.0/.",
+          "fields_matched": [
+            "description",
+            "title",
+            "tags.name"
+          ],
+          "mature": false,
+          "height": 680,
+          "width": 1024,
+          "thumbnail": "https://api.openverse.org/v1/images/9569187e-5b4e-46aa-8864-f00f89d337ca/thumb/",
+          "detail_url": "https://api.openverse.org/v1/images/9569187e-5b4e-46aa-8864-f00f89d337ca/",
+          "related_url": "https://api.openverse.org/v1/images/9569187e-5b4e-46aa-8864-f00f89d337ca/related/",
+          "unstable__sensitivity": []
+        }
+      ]
+    }
+  }
+}

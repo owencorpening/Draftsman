@@ -1,0 +1,40 @@
+{
+  "$schema": "./source.schema.json",
+  "id": "local",
+  "name": "Local folder",
+  "kind": "folder",
+  "enabledByDefault": false,
+  "terms": {
+    "read": "2026-11-25",
+    "links": [{ "url": "https://github.com/owencorpening/Draftsman#a-local-folder-of-images", "about": "How to describe your own images" }],
+    "notes": [
+      "A folder of your own images. Draftsman can't know an image's license from the file, so each image needs a sidecar file, <image>.json, giving its license. An image without one fails the license check.",
+      "Images are copied beside the article, so the post doesn't depend on the folder staying put."
+    ]
+  },
+  "sidecar": {
+    "license": "license",
+    "title": "title",
+    "creator": "creator",
+    "creatorUrl": "creatorUrl",
+    "pageUrl": "pageUrl"
+  },
+  "license": {
+    "field": "license",
+    "map": [
+      { "match": "^(own|own work)$", "license": "own" },
+      { "match": "^cc0$", "license": "cc0" },
+      { "match": "^(public domain|public-domain)$", "license": "public-domain" },
+      { "match": "^cc[ -]by$", "license": "cc-by" },
+      { "match": "^cc[ -]by-sa$", "license": "cc-by-sa" },
+      { "match": "^cc[ -]by-nc$", "license": "cc-by-nc" },
+      { "match": "^cc[ -]by-nd$", "license": "cc-by-nd" }
+    ]
+  },
+  "use": {
+    "mode": "download",
+    "cacheSeconds": 0,
+    "prohibited": []
+  },
+  "credit": "[?Image by {creatorLink}?][?, {licenseLink}?]"
+}

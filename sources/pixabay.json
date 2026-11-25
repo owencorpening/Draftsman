@@ -1,0 +1,62 @@
+{
+  "$schema": "./source.schema.json",
+  "id": "pixabay",
+  "name": "Pixabay",
+  "kind": "api",
+  "enabledByDefault": true,
+  "terms": {
+    "read": "2026-11-25",
+    "links": [
+      { "url": "https://pixabay.com/api/docs/", "about": "API documentation: hotlinking, caching, showing the source, rate limits" },
+      { "url": "https://pixabay.com/service/terms/", "about": "Terms of service and Content License" },
+      { "url": "https://pixabay.com/service/license-summary/", "about": "Content License summary" }
+    ],
+    "notes": [
+      "API docs: \"permanent hotlinking of images (using Pixabay URLs in your app) is not allowed. If you intend to use the images, please download them to your server first.\" So images are downloaded.",
+      "API docs: \"requests must be cached for 24 hours.\" So searches are cached for 86400 seconds.",
+      "API docs: \"show your users where the images and videos are from, whenever search results are displayed.\" So every search result names Pixabay.",
+      "Terms, section 6: credit is not required but \"certainly appreciated\", suggested as \"by [Contributor] via Pixabay\". So a credit line is always written.",
+      "License summary: commercial use and changes are allowed without attribution; the prohibited uses are listed under use.prohibited.",
+      "No endpoint is documented to call when an image is used, so there is no on-pick URL.",
+      "Rate limit: 100 requests per 60 seconds per key."
+    ]
+  },
+  "auth": {
+    "type": "query",
+    "name": "key",
+    "env": "DRAFTSMAN_PIXABAY_KEY",
+    "getKeyUrl": "https://pixabay.com/api/docs/"
+  },
+  "search": {
+    "url": "https://pixabay.com/api/?q={query}&per_page={count}&image_type=photo&safesearch=true",
+    "results": "hits",
+    "maxCount": 200
+  },
+  "fields": {
+    "id": "id",
+    "title": "tags",
+    "pageUrl": "pageURL",
+    "imageUrl": "largeImageURL",
+    "thumbnailUrl": "previewURL",
+    "width": "imageWidth",
+    "height": "imageHeight",
+    "creator": "user",
+    "creatorUrl": { "template": "https://pixabay.com/users/{user}-{user_id}/" }
+  },
+  "license": {
+    "fixed": "pixabay",
+    "pageUrlPattern": "^https://pixabay\\.com/",
+    "url": "https://pixabay.com/service/license-summary/"
+  },
+  "use": {
+    "mode": "download",
+    "cacheSeconds": 86400,
+    "prohibited": [
+      "Pixabay: don't sell or distribute the image on its own, even resized, cropped or filtered.",
+      "Pixabay: don't use images showing trademarks or brands commercially, or on merchandise.",
+      "Pixabay: don't use images in an immoral, illegal, misleading or deceptive way, especially ones showing a recognisable person.",
+      "Pixabay: don't use an image as part of a trademark, trade name or business name."
+    ]
+  },
+  "credit": "Image by {creatorLink} from [Pixabay]({page})"
+}

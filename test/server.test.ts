@@ -31,10 +31,10 @@ describe('MCP server', () => {
     return client;
   }
 
-  it('offers find_slots and mark_slot', async () => {
+  it('offers its tools', async () => {
     const client = await connect();
     const { tools } = await client.listTools();
-    expect(tools.map((t) => t.name).sort()).toEqual(['find_slots', 'mark_slot']);
+    expect(tools.map((t) => t.name).sort()).toEqual(['check_license', 'find_slots', 'mark_slot', 'place_image', 'search_images']);
     expect(tools.find((t) => t.name === 'find_slots')?.annotations?.readOnlyHint).toBe(true);
   });
 
@@ -71,13 +71,13 @@ describe('MCP server', () => {
     const client = await overStdio(new Client({ name: 'test', version: '0.0.0' }, { versionNegotiation: { mode: { pin: '2026-07-28' } } }));
     expect(client.getNegotiatedProtocolVersion()).toBe('2026-07-28');
     const { tools } = await client.listTools();
-    expect(tools.map((t) => t.name).sort()).toEqual(['find_slots', 'mark_slot']);
+    expect(tools.map((t) => t.name).sort()).toEqual(['check_license', 'find_slots', 'mark_slot', 'place_image', 'search_images']);
   });
 
   it('still serves hosts that open with the older initialize handshake', async () => {
     const client = await overStdio(new Client({ name: 'test', version: '0.0.0' }));
     expect(client.getNegotiatedProtocolVersion()).toBe('2025-11-25');
     const { tools } = await client.listTools();
-    expect(tools).toHaveLength(2);
+    expect(tools).toHaveLength(5);
   });
 });

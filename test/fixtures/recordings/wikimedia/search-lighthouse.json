@@ -1,0 +1,298 @@
+{
+  "recordedAt": "2026-11-25",
+  "note": "Live response from Wikimedia Commons, recorded with scripts/record.ts.",
+  "request": {
+    "method": "GET",
+    "url": "https://commons.wikimedia.org/w/api.php?action=query&format=json&formatversion=2&generator=search&gsrsearch=filetype%3Abitmap%20lighthouse&gsrnamespace=6&gsrlimit=5&prop=imageinfo&iiprop=url%7Csize%7Cextmetadata&iiurlwidth=1600&iiextmetadatafilter=LicenseShortName%7CLicenseUrl%7CArtist%7CObjectName%7CRestrictions%7CNonFree"
+  },
+  "response": {
+    "status": 200,
+    "contentType": "application/json; charset=utf-8",
+    "body": {
+      "batchcomplete": true,
+      "continue": {
+        "gsroffset": 5,
+        "continue": "gsroffset||"
+      },
+      "query": {
+        "pages": [
+          {
+            "pageid": 40139206,
+            "ns": 6,
+            "title": "File:Osmussaar. Lighthouse..jpg",
+            "index": 3,
+            "imagerepository": "local",
+            "imageinfo": [
+              {
+                "size": 4006577,
+                "width": 3746,
+                "height": 2487,
+                "thumburl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/0/0d/Osmussaar._Lighthouse..jpg/1920px-Osmussaar._Lighthouse..jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+                "thumbwidth": 1600,
+                "thumbheight": 1062,
+                "responsiveUrls": {
+                  "2": "https://upload.wikimedia.org/wikipedia/commons/0/0d/Osmussaar._Lighthouse..jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled"
+                },
+                "thumbattribs": {
+                  "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/0/0d/Osmussaar._Lighthouse..jpg/1920px-Osmussaar._Lighthouse..jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+                  "decoding": "async",
+                  "loading": "lazy",
+                  "width": 1600,
+                  "height": 1062,
+                  "srcset": "https://upload.wikimedia.org/wikipedia/commons/0/0d/Osmussaar._Lighthouse..jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled 2x"
+                },
+                "url": "https://upload.wikimedia.org/wikipedia/commons/0/0d/Osmussaar._Lighthouse..jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+                "descriptionurl": "https://commons.wikimedia.org/wiki/File:Osmussaar._Lighthouse..jpg",
+                "descriptionshorturl": "https://commons.wikimedia.org/wiki/Special:Redirect/page/40139206",
+                "extmetadata": {
+                  "ObjectName": {
+                    "value": "Osmussaar. Lighthouse.",
+                    "source": "mediawiki-metadata"
+                  },
+                  "Artist": {
+                    "value": "<a href=\"//commons.wikimedia.org/wiki/User:Aleksandr_Abrosimov\" title=\"User:Aleksandr Abrosimov\">Aleksandr Abrosimov</a>",
+                    "source": "commons-desc-page"
+                  },
+                  "LicenseShortName": {
+                    "value": "CC BY-SA 3.0 ee",
+                    "source": "commons-desc-page",
+                    "hidden": ""
+                  },
+                  "LicenseUrl": {
+                    "value": "https://creativecommons.org/licenses/by-sa/3.0/ee/deed.en",
+                    "source": "commons-desc-page"
+                  },
+                  "Restrictions": {
+                    "value": "",
+                    "source": "commons-desc-page",
+                    "hidden": ""
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "pageid": 42048641,
+            "ns": 6,
+            "title": "File:Port and lighthouse overnight storm with lightning in Port-la-Nouvelle.jpg",
+            "index": 4,
+            "imagerepository": "local",
+            "imageinfo": [
+              {
+                "size": 12455230,
+                "width": 5681,
+                "height": 3196,
+                "thumburl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/c/c2/Port_and_lighthouse_overnight_storm_with_lightning_in_Port-la-Nouvelle.jpg/1920px-Port_and_lighthouse_overnight_storm_with_lightning_in_Port-la-Nouvelle.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+                "thumbwidth": 1600,
+                "thumbheight": 900,
+                "responsiveUrls": {
+                  "2": "https://thumb.wikimedia.org/wikipedia/commons/thumb/c/c2/Port_and_lighthouse_overnight_storm_with_lightning_in_Port-la-Nouvelle.jpg/3840px-Port_and_lighthouse_overnight_storm_with_lightning_in_Port-la-Nouvelle.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail"
+                },
+                "thumbattribs": {
+                  "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/c/c2/Port_and_lighthouse_overnight_storm_with_lightning_in_Port-la-Nouvelle.jpg/1920px-Port_and_lighthouse_overnight_storm_with_lightning_in_Port-la-Nouvelle.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+                  "decoding": "async",
+                  "loading": "lazy",
+                  "width": 1600,
+                  "height": 900,
+                  "srcset": "https://thumb.wikimedia.org/wikipedia/commons/thumb/c/c2/Port_and_lighthouse_overnight_storm_with_lightning_in_Port-la-Nouvelle.jpg/3840px-Port_and_lighthouse_overnight_storm_with_lightning_in_Port-la-Nouvelle.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail 2x"
+                },
+                "url": "https://upload.wikimedia.org/wikipedia/commons/c/c2/Port_and_lighthouse_overnight_storm_with_lightning_in_Port-la-Nouvelle.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+                "descriptionurl": "https://commons.wikimedia.org/wiki/File:Port_and_lighthouse_overnight_storm_with_lightning_in_Port-la-Nouvelle.jpg",
+                "descriptionshorturl": "https://commons.wikimedia.org/wiki/Special:Redirect/page/42048641",
+                "extmetadata": {
+                  "ObjectName": {
+                    "value": "Port and lighthouse overnight storm with lightning in Port-la-Nouvelle",
+                    "source": "mediawiki-metadata"
+                  },
+                  "Artist": {
+                    "value": "<a rel=\"nofollow\" class=\"external text\" href=\"https://www.flickr.com/people/108892623@N02\">Maxime Raynal</a> from France",
+                    "source": "commons-desc-page"
+                  },
+                  "LicenseShortName": {
+                    "value": "CC BY 2.0",
+                    "source": "commons-desc-page",
+                    "hidden": ""
+                  },
+                  "LicenseUrl": {
+                    "value": "https://creativecommons.org/licenses/by/2.0",
+                    "source": "commons-desc-page"
+                  },
+                  "Restrictions": {
+                    "value": "",
+                    "source": "commons-desc-page",
+                    "hidden": ""
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "pageid": 46794124,
+            "ns": 6,
+            "title": "File:Leuchtturm in Westerheversand crop.jpg",
+            "index": 1,
+            "imagerepository": "local",
+            "imageinfo": [
+              {
+                "size": 8770678,
+                "width": 3606,
+                "height": 2894,
+                "thumburl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/0/02/Leuchtturm_in_Westerheversand_crop.jpg/1920px-Leuchtturm_in_Westerheversand_crop.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+                "thumbwidth": 1600,
+                "thumbheight": 1284,
+                "responsiveUrls": {
+                  "2": "https://upload.wikimedia.org/wikipedia/commons/0/02/Leuchtturm_in_Westerheversand_crop.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled"
+                },
+                "thumbattribs": {
+                  "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/0/02/Leuchtturm_in_Westerheversand_crop.jpg/1920px-Leuchtturm_in_Westerheversand_crop.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+                  "decoding": "async",
+                  "loading": "lazy",
+                  "width": 1600,
+                  "height": 1284,
+                  "srcset": "https://upload.wikimedia.org/wikipedia/commons/0/02/Leuchtturm_in_Westerheversand_crop.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled 2x"
+                },
+                "url": "https://upload.wikimedia.org/wikipedia/commons/0/02/Leuchtturm_in_Westerheversand_crop.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+                "descriptionurl": "https://commons.wikimedia.org/wiki/File:Leuchtturm_in_Westerheversand_crop.jpg",
+                "descriptionshorturl": "https://commons.wikimedia.org/wiki/Special:Redirect/page/46794124",
+                "extmetadata": {
+                  "ObjectName": {
+                    "value": "Leuchtturm in Westerheversand crop",
+                    "source": "mediawiki-metadata"
+                  },
+                  "Artist": {
+                    "value": "<a href=\"//commons.wikimedia.org/wiki/User:Phantom3Pix\" title=\"User:Phantom3Pix\">Marco Leiter</a>",
+                    "source": "commons-desc-page"
+                  },
+                  "LicenseShortName": {
+                    "value": "CC BY-SA 4.0",
+                    "source": "commons-desc-page",
+                    "hidden": ""
+                  },
+                  "LicenseUrl": {
+                    "value": "https://creativecommons.org/licenses/by-sa/4.0",
+                    "source": "commons-desc-page"
+                  },
+                  "Restrictions": {
+                    "value": "",
+                    "source": "commons-desc-page",
+                    "hidden": ""
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "pageid": 84936754,
+            "ns": 6,
+            "title": "File:Point Reyes Lighthouse in December 2019.jpg",
+            "index": 5,
+            "imagerepository": "local",
+            "imageinfo": [
+              {
+                "size": 24392333,
+                "width": 5191,
+                "height": 4153,
+                "thumburl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/d/d4/Point_Reyes_Lighthouse_in_December_2019.jpg/1920px-Point_Reyes_Lighthouse_in_December_2019.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+                "thumbwidth": 1600,
+                "thumbheight": 1280,
+                "responsiveUrls": {
+                  "2": "https://thumb.wikimedia.org/wikipedia/commons/thumb/d/d4/Point_Reyes_Lighthouse_in_December_2019.jpg/3840px-Point_Reyes_Lighthouse_in_December_2019.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail"
+                },
+                "thumbattribs": {
+                  "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/d/d4/Point_Reyes_Lighthouse_in_December_2019.jpg/1920px-Point_Reyes_Lighthouse_in_December_2019.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+                  "decoding": "async",
+                  "loading": "lazy",
+                  "width": 1600,
+                  "height": 1280,
+                  "srcset": "https://thumb.wikimedia.org/wikipedia/commons/thumb/d/d4/Point_Reyes_Lighthouse_in_December_2019.jpg/3840px-Point_Reyes_Lighthouse_in_December_2019.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail 2x"
+                },
+                "url": "https://upload.wikimedia.org/wikipedia/commons/d/d4/Point_Reyes_Lighthouse_in_December_2019.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+                "descriptionurl": "https://commons.wikimedia.org/wiki/File:Point_Reyes_Lighthouse_in_December_2019.jpg",
+                "descriptionshorturl": "https://commons.wikimedia.org/wiki/Special:Redirect/page/84936754",
+                "extmetadata": {
+                  "ObjectName": {
+                    "value": "Point Reyes Lighthouse in December 2019",
+                    "source": "mediawiki-metadata"
+                  },
+                  "Artist": {
+                    "value": "<bdi><a href=\"https://www.wikidata.org/wiki/Q57175365\" class=\"extiw\" title=\"d:Q57175365\"><span title=\"German-American photographer, Wikipedian, and Executive Director of the Wiki Education Foundation\">Frank Schulenburg</span></a></bdi>",
+                    "source": "commons-desc-page"
+                  },
+                  "LicenseShortName": {
+                    "value": "CC BY-SA 4.0",
+                    "source": "commons-desc-page",
+                    "hidden": ""
+                  },
+                  "LicenseUrl": {
+                    "value": "https://creativecommons.org/licenses/by-sa/4.0",
+                    "source": "commons-desc-page"
+                  },
+                  "Restrictions": {
+                    "value": "",
+                    "source": "commons-desc-page",
+                    "hidden": ""
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "pageid": 93211401,
+            "ns": 6,
+            "title": "File:2016-11-13 01 Kjeungskjær Lighthouse, Sør-Trøndelag, Norway.jpg",
+            "index": 2,
+            "imagerepository": "local",
+            "imageinfo": [
+              {
+                "size": 9316615,
+                "width": 6000,
+                "height": 3257,
+                "thumburl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/9/92/2016-11-13_01_Kjeungskj%C3%A6r_Lighthouse%2C_S%C3%B8r-Tr%C3%B8ndelag%2C_Norway.jpg/1920px-2016-11-13_01_Kjeungskj%C3%A6r_Lighthouse%2C_S%C3%B8r-Tr%C3%B8ndelag%2C_Norway.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+                "thumbwidth": 1600,
+                "thumbheight": 869,
+                "responsiveUrls": {
+                  "2": "https://thumb.wikimedia.org/wikipedia/commons/thumb/9/92/2016-11-13_01_Kjeungskj%C3%A6r_Lighthouse%2C_S%C3%B8r-Tr%C3%B8ndelag%2C_Norway.jpg/3840px-2016-11-13_01_Kjeungskj%C3%A6r_Lighthouse%2C_S%C3%B8r-Tr%C3%B8ndelag%2C_Norway.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail"
+                },
+                "thumbattribs": {
+                  "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/9/92/2016-11-13_01_Kjeungskj%C3%A6r_Lighthouse%2C_S%C3%B8r-Tr%C3%B8ndelag%2C_Norway.jpg/1920px-2016-11-13_01_Kjeungskj%C3%A6r_Lighthouse%2C_S%C3%B8r-Tr%C3%B8ndelag%2C_Norway.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+                  "decoding": "async",
+                  "loading": "lazy",
+                  "width": 1600,
+                  "height": 869,
+                  "srcset": "https://thumb.wikimedia.org/wikipedia/commons/thumb/9/92/2016-11-13_01_Kjeungskj%C3%A6r_Lighthouse%2C_S%C3%B8r-Tr%C3%B8ndelag%2C_Norway.jpg/3840px-2016-11-13_01_Kjeungskj%C3%A6r_Lighthouse%2C_S%C3%B8r-Tr%C3%B8ndelag%2C_Norway.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail 2x"
+                },
+                "url": "https://upload.wikimedia.org/wikipedia/commons/9/92/2016-11-13_01_Kjeungskj%C3%A6r_Lighthouse%2C_S%C3%B8r-Tr%C3%B8ndelag%2C_Norway.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+                "descriptionurl": "https://commons.wikimedia.org/wiki/File:2016-11-13_01_Kjeungskj%C3%A6r_Lighthouse,_S%C3%B8r-Tr%C3%B8ndelag,_Norway.jpg",
+                "descriptionshorturl": "https://commons.wikimedia.org/wiki/Special:Redirect/page/93211401",
+                "extmetadata": {
+                  "ObjectName": {
+                    "value": "2016-11-13 01 Kjeungskjær Lighthouse, Sør-Trøndelag, Norway",
+                    "source": "mediawiki-metadata"
+                  },
+                  "Artist": {
+                    "value": "<a href=\"//commons.wikimedia.org/wiki/User:GRDN711\" title=\"User:GRDN711\">Gordon Leggett</a>",
+                    "source": "commons-desc-page"
+                  },
+                  "LicenseShortName": {
+                    "value": "CC BY-SA 4.0",
+                    "source": "commons-desc-page",
+                    "hidden": ""
+                  },
+                  "LicenseUrl": {
+                    "value": "https://creativecommons.org/licenses/by-sa/4.0",
+                    "source": "commons-desc-page"
+                  },
+                  "Restrictions": {
+                    "value": "",
+                    "source": "commons-desc-page",
+                    "hidden": ""
+                  }
+                }
+              }
+            ]
+          }
+        ]
+      }
+    }
+  }
+}

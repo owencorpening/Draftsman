@@ -12,7 +12,8 @@
     "draftsman": "dist/server.js"
   },
   "files": [
-    "dist"
+    "dist",
+    "sources"
   ],
   "scripts": {
     "build": "tsc -p tsconfig.build.json",
@@ -22,6 +23,8 @@
     "typecheck": "tsc -p tsconfig.json",
     "test": "vitest run",
     "test-browser": "tsx scripts/install-test-browser.ts",
+    "record": "tsx scripts/record.ts",
+    "schema": "tsx scripts/write-schema.ts",
     "check-names": "bash scripts/check-private-names.sh"
   },
   "dependencies": {

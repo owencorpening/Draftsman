@@ -1,0 +1,266 @@
+{
+  "recordedAt": "2026-11-25",
+  "note": "Live response from Wikimedia Commons, recorded with scripts/record.ts.",
+  "request": {
+    "method": "GET",
+    "url": "https://commons.wikimedia.org/w/api.php?action=query&format=json&formatversion=2&generator=search&gsrsearch=filetype%3Abitmap%20Coca-Cola%20logo&gsrnamespace=6&gsrlimit=5&prop=imageinfo&iiprop=url%7Csize%7Cextmetadata&iiurlwidth=1600&iiextmetadatafilter=LicenseShortName%7CLicenseUrl%7CArtist%7CObjectName%7CRestrictions%7CNonFree"
+  },
+  "response": {
+    "status": 200,
+    "contentType": "application/json; charset=utf-8",
+    "body": {
+      "batchcomplete": true,
+      "continue": {
+        "gsroffset": 5,
+        "continue": "gsroffset||"
+      },
+      "query": {
+        "pages": [
+          {
+            "pageid": 43692381,
+            "ns": 6,
+            "title": "File:15-09-26-RalfR-WLC-0098 - Coca-Cola glass bottle (Germany).jpg",
+            "index": 1,
+            "imagerepository": "local",
+            "imageinfo": [
+              {
+                "size": 3630823,
+                "width": 2354,
+                "height": 4174,
+                "thumburl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/e/e8/15-09-26-RalfR-WLC-0098_-_Coca-Cola_glass_bottle_%28Germany%29.jpg/1920px-15-09-26-RalfR-WLC-0098_-_Coca-Cola_glass_bottle_%28Germany%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+                "thumbwidth": 1600,
+                "thumbheight": 2837,
+                "responsiveUrls": {
+                  "2": "https://upload.wikimedia.org/wikipedia/commons/e/e8/15-09-26-RalfR-WLC-0098_-_Coca-Cola_glass_bottle_%28Germany%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled"
+                },
+                "thumbattribs": {
+                  "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/e/e8/15-09-26-RalfR-WLC-0098_-_Coca-Cola_glass_bottle_%28Germany%29.jpg/1920px-15-09-26-RalfR-WLC-0098_-_Coca-Cola_glass_bottle_%28Germany%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+                  "decoding": "async",
+                  "loading": "lazy",
+                  "width": 1600,
+                  "height": 2837,
+                  "srcset": "https://upload.wikimedia.org/wikipedia/commons/e/e8/15-09-26-RalfR-WLC-0098_-_Coca-Cola_glass_bottle_%28Germany%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled 2x"
+                },
+                "url": "https://upload.wikimedia.org/wikipedia/commons/e/e8/15-09-26-RalfR-WLC-0098_-_Coca-Cola_glass_bottle_%28Germany%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+                "descriptionurl": "https://commons.wikimedia.org/wiki/File:15-09-26-RalfR-WLC-0098_-_Coca-Cola_glass_bottle_(Germany).jpg",
+                "descriptionshorturl": "https://commons.wikimedia.org/wiki/Special:Redirect/page/43692381",
+                "extmetadata": {
+                  "ObjectName": {
+                    "value": "15-09-26-RalfR-WLC-0098 - Coca-Cola glass bottle (Germany)",
+                    "source": "mediawiki-metadata"
+                  },
+                  "Artist": {
+                    "value": "<bdi><a href=\"https://www.wikidata.org/wiki/Q15080600\" class=\"extiw\" title=\"d:Q15080600\"><span title=\"German civil engineer and photographer\">Ralf Roletschek</span></a></bdi>",
+                    "source": "commons-desc-page"
+                  },
+                  "LicenseShortName": {
+                    "value": "Public domain",
+                    "source": "commons-desc-page",
+                    "hidden": ""
+                  },
+                  "Restrictions": {
+                    "value": "trademarked",
+                    "source": "commons-desc-page",
+                    "hidden": ""
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "pageid": 48594286,
+            "ns": 6,
+            "title": "File:Coca-Cola Life Logo.png",
+            "index": 4,
+            "imagerepository": "local",
+            "imageinfo": [
+              {
+                "size": 19767,
+                "width": 343,
+                "height": 208,
+                "thumburl": "https://upload.wikimedia.org/wikipedia/commons/9/94/Coca-Cola_Life_Logo.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled",
+                "thumbwidth": 1600,
+                "thumbheight": 970,
+                "thumbattribs": {
+                  "src": "https://upload.wikimedia.org/wikipedia/commons/9/94/Coca-Cola_Life_Logo.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled",
+                  "decoding": "async",
+                  "loading": "lazy",
+                  "width": 1600,
+                  "height": 970
+                },
+                "url": "https://upload.wikimedia.org/wikipedia/commons/9/94/Coca-Cola_Life_Logo.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+                "descriptionurl": "https://commons.wikimedia.org/wiki/File:Coca-Cola_Life_Logo.png",
+                "descriptionshorturl": "https://commons.wikimedia.org/wiki/Special:Redirect/page/48594286",
+                "extmetadata": {
+                  "ObjectName": {
+                    "value": "Coca-Cola Life Logo",
+                    "source": "mediawiki-metadata"
+                  },
+                  "Artist": {
+                    "value": "Coca Cola",
+                    "source": "commons-desc-page"
+                  },
+                  "LicenseShortName": {
+                    "value": "Public domain",
+                    "source": "commons-desc-page",
+                    "hidden": ""
+                  },
+                  "Restrictions": {
+                    "value": "trademarked",
+                    "source": "commons-desc-page",
+                    "hidden": ""
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "pageid": 81968208,
+            "ns": 6,
+            "title": "File:Coca-Cola can with Khmer equivalent.jpg",
+            "index": 5,
+            "imagerepository": "local",
+            "imageinfo": [
+              {
+                "size": 1161015,
+                "width": 2062,
+                "height": 3492,
+                "thumburl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/5/53/Coca-Cola_can_with_Khmer_equivalent.jpg/1920px-Coca-Cola_can_with_Khmer_equivalent.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+                "thumbwidth": 1600,
+                "thumbheight": 2710,
+                "responsiveUrls": {
+                  "2": "https://upload.wikimedia.org/wikipedia/commons/5/53/Coca-Cola_can_with_Khmer_equivalent.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled"
+                },
+                "thumbattribs": {
+                  "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/5/53/Coca-Cola_can_with_Khmer_equivalent.jpg/1920px-Coca-Cola_can_with_Khmer_equivalent.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+                  "decoding": "async",
+                  "loading": "lazy",
+                  "width": 1600,
+                  "height": 2710,
+                  "srcset": "https://upload.wikimedia.org/wikipedia/commons/5/53/Coca-Cola_can_with_Khmer_equivalent.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled 2x"
+                },
+                "url": "https://upload.wikimedia.org/wikipedia/commons/5/53/Coca-Cola_can_with_Khmer_equivalent.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+                "descriptionurl": "https://commons.wikimedia.org/wiki/File:Coca-Cola_can_with_Khmer_equivalent.jpg",
+                "descriptionshorturl": "https://commons.wikimedia.org/wiki/Special:Redirect/page/81968208",
+                "extmetadata": {
+                  "ObjectName": {
+                    "value": "Coca-Cola can with Khmer equivalent",
+                    "source": "mediawiki-metadata"
+                  },
+                  "Artist": {
+                    "value": "<a href=\"//commons.wikimedia.org/wiki/User:Treehill\" title=\"User:Treehill\">Treehill</a>",
+                    "source": "commons-desc-page"
+                  },
+                  "LicenseShortName": {
+                    "value": "Public domain",
+                    "source": "commons-desc-page",
+                    "hidden": ""
+                  },
+                  "Restrictions": {
+                    "value": "trademarked",
+                    "source": "commons-desc-page",
+                    "hidden": ""
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "pageid": 180432668,
+            "ns": 6,
+            "title": "File:Coca-Cola Beverages Philippines logo.png",
+            "index": 3,
+            "imagerepository": "local",
+            "imageinfo": [
+              {
+                "size": 96652,
+                "width": 1195,
+                "height": 196,
+                "thumburl": "https://upload.wikimedia.org/wikipedia/commons/5/55/Coca-Cola_Beverages_Philippines_logo.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled",
+                "thumbwidth": 1600,
+                "thumbheight": 262,
+                "thumbattribs": {
+                  "src": "https://upload.wikimedia.org/wikipedia/commons/5/55/Coca-Cola_Beverages_Philippines_logo.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled",
+                  "decoding": "async",
+                  "loading": "lazy",
+                  "width": 1600,
+                  "height": 262
+                },
+                "url": "https://upload.wikimedia.org/wikipedia/commons/5/55/Coca-Cola_Beverages_Philippines_logo.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+                "descriptionurl": "https://commons.wikimedia.org/wiki/File:Coca-Cola_Beverages_Philippines_logo.png",
+                "descriptionshorturl": "https://commons.wikimedia.org/wiki/Special:Redirect/page/180432668",
+                "extmetadata": {
+                  "ObjectName": {
+                    "value": "Coca-Cola Beverages Philippines logo",
+                    "source": "mediawiki-metadata"
+                  },
+                  "Artist": {
+                    "value": "<a href=\"https://en.wikipedia.org/wiki/en:Coca-Cola_Beverages_Philippines,_Inc.\" class=\"extiw\" title=\"w:en:Coca-Cola Beverages Philippines, Inc.\">Coca-Cola Beverages Philippines, Inc.</a>",
+                    "source": "commons-desc-page"
+                  },
+                  "LicenseShortName": {
+                    "value": "Public domain",
+                    "source": "commons-desc-page",
+                    "hidden": ""
+                  },
+                  "Restrictions": {
+                    "value": "trademarked",
+                    "source": "commons-desc-page",
+                    "hidden": ""
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "pageid": 180432918,
+            "ns": 6,
+            "title": "File:Coca-Cola Europacific Aboitiz Philippines logo.png",
+            "index": 2,
+            "imagerepository": "local",
+            "imageinfo": [
+              {
+                "size": 9989,
+                "width": 451,
+                "height": 230,
+                "thumburl": "https://upload.wikimedia.org/wikipedia/commons/b/bd/Coca-Cola_Europacific_Aboitiz_Philippines_logo.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled",
+                "thumbwidth": 1600,
+                "thumbheight": 816,
+                "thumbattribs": {
+                  "src": "https://upload.wikimedia.org/wikipedia/commons/b/bd/Coca-Cola_Europacific_Aboitiz_Philippines_logo.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled",
+                  "decoding": "async",
+                  "loading": "lazy",
+                  "width": 1600,
+                  "height": 816
+                },
+                "url": "https://upload.wikimedia.org/wikipedia/commons/b/bd/Coca-Cola_Europacific_Aboitiz_Philippines_logo.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+                "descriptionurl": "https://commons.wikimedia.org/wiki/File:Coca-Cola_Europacific_Aboitiz_Philippines_logo.png",
+                "descriptionshorturl": "https://commons.wikimedia.org/wiki/Special:Redirect/page/180432918",
+                "extmetadata": {
+                  "ObjectName": {
+                    "value": "Coca-Cola Europacific Aboitiz Philippines logo",
+                    "source": "mediawiki-metadata"
+                  },
+                  "Artist": {
+                    "value": "<a href=\"https://en.wikipedia.org/wiki/en:Coca-Cola_Europacific_Aboitiz_Philippines\" class=\"extiw\" title=\"w:en:Coca-Cola Europacific Aboitiz Philippines\">Coca-Cola Europacific Aboitiz Philippines</a>",
+                    "source": "commons-desc-page"
+                  },
+                  "LicenseShortName": {
+                    "value": "Public domain",
+                    "source": "commons-desc-page",
+                    "hidden": ""
+                  },
+                  "Restrictions": {
+                    "value": "trademarked",
+                    "source": "commons-desc-page",
+                    "hidden": ""
+                  }
+                }
+              }
+            ]
+          }
+        ]
+      }
+    }
+  }
+}

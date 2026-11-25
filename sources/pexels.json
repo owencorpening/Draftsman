@@ -1,0 +1,63 @@
+{
+  "$schema": "./source.schema.json",
+  "id": "pexels",
+  "name": "Pexels",
+  "kind": "api",
+  "enabledByDefault": false,
+  "terms": {
+    "read": "2026-11-25",
+    "links": [
+      { "url": "https://www.pexels.com/api/", "about": "API overview: key issuance" },
+      { "url": "https://www.pexels.com/api/documentation/", "about": "API documentation and guidelines" },
+      { "url": "https://www.pexels.com/license/", "about": "Pexels License" },
+      { "url": "https://www.pexels.com/terms-of-service/", "about": "Terms of service" }
+    ],
+    "notes": [
+      "API overview: \"New API key issuance is currently paused and cannot be requested.\" So this preset is only for people who already have a key, and is off by default.",
+      "API guidelines: \"Always credit our photographers when possible (e.g. 'Photo by John Doe on Pexels' with a link to the photo page on Pexels).\" So the credit uses that wording.",
+      "License: commercial use and changes are allowed and attribution is not required; the prohibited uses are listed under use.prohibited.",
+      "The documentation says nothing about hotlinking or caching. Images are downloaded, and searches are cached for an hour.",
+      "Rate limit: 200 requests per hour and 20,000 per month.",
+      "No endpoint is documented to call when a photo is used, so there is no on-pick URL."
+    ]
+  },
+  "auth": {
+    "type": "header",
+    "name": "Authorization",
+    "env": "DRAFTSMAN_PEXELS_KEY",
+    "getKeyUrl": "https://www.pexels.com/api/"
+  },
+  "search": {
+    "url": "https://api.pexels.com/v1/search?query={query}&per_page={count}",
+    "results": "photos",
+    "maxCount": 80
+  },
+  "fields": {
+    "id": "id",
+    "title": "alt",
+    "pageUrl": "url",
+    "imageUrl": "src.large2x",
+    "thumbnailUrl": "src.medium",
+    "width": "width",
+    "height": "height",
+    "creator": "photographer",
+    "creatorUrl": "photographer_url"
+  },
+  "license": {
+    "fixed": "pexels",
+    "pageUrlPattern": "^https://www\\.pexels\\.com/",
+    "url": "https://www.pexels.com/license/"
+  },
+  "use": {
+    "mode": "download",
+    "cacheSeconds": 3600,
+    "prohibited": [
+      "Pexels: don't sell unaltered copies of the photo, e.g. as a poster, print or on a physical product.",
+      "Pexels: don't show identifiable people in a bad light or in an offensive way.",
+      "Pexels: don't imply that people or brands in the photo endorse your product.",
+      "Pexels: don't use the photo as part of a trademark, design mark, trade name, business name or service mark.",
+      "Pexels: don't use the photo in a political context, such as promoting a party or candidate."
+    ]
+  },
+  "credit": "Photo by {creatorLink} on [Pexels]({page})"
+}

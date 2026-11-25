@@ -1,0 +1,63 @@
+{
+  "recordedAt": "2026-11-25",
+  "note": "NOT a live response: no Pexels key was available when this was made. Field names and shapes follow https://www.pexels.com/api/documentation/ (read 2026-11-25); the values are placeholders. Replace with a live recording: set the key, then npm run record.",
+  "request": {
+    "method": "GET",
+    "url": "https://api.pexels.com/v1/search?query=lighthouse&per_page=5"
+  },
+  "response": {
+    "status": 200,
+    "contentType": "application/json",
+    "body": {
+      "total_results": 2,
+      "page": 1,
+      "per_page": 5,
+      "photos": [
+        {
+          "id": 3000001,
+          "width": 4000,
+          "height": 6000,
+          "url": "https://www.pexels.com/photo/sample-lighthouse-3000001/",
+          "photographer": "Sample Photographer",
+          "photographer_url": "https://www.pexels.com/@sample-photographer",
+          "photographer_id": 4000001,
+          "avg_color": "#7A8B99",
+          "liked": false,
+          "alt": "White lighthouse on a rocky coast",
+          "src": {
+            "original": "https://images.pexels.com/photos/3000001/sample.jpeg",
+            "large2x": "https://images.pexels.com/photos/3000001/sample.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+            "large": "https://images.pexels.com/photos/3000001/sample.jpeg?auto=compress&cs=tinysrgb&h=650&w=940",
+            "medium": "https://images.pexels.com/photos/3000001/sample.jpeg?auto=compress&cs=tinysrgb&h=350",
+            "small": "https://images.pexels.com/photos/3000001/sample.jpeg?auto=compress&cs=tinysrgb&h=130",
+            "portrait": "https://images.pexels.com/photos/3000001/sample.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=1200&w=800",
+            "landscape": "https://images.pexels.com/photos/3000001/sample.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=627&w=1200",
+            "tiny": "https://images.pexels.com/photos/3000001/sample.jpeg?auto=compress&cs=tinysrgb&dpr=1&fit=crop&h=200&w=280"
+          }
+        },
+        {
+          "id": 3000002,
+          "width": 3000,
+          "height": 2000,
+          "url": "https://example.com/not-pexels/3000002",
+          "photographer": "Elsewhere",
+          "photographer_url": "https://example.com/elsewhere",
+          "photographer_id": 4000002,
+          "avg_color": "#333333",
+          "liked": false,
+          "alt": "Lighthouse at night",
+          "src": {
+            "original": "https://example.com/3000002.jpeg",
+            "large2x": "https://example.com/3000002-large2x.jpeg",
+            "large": "https://example.com/3000002-large.jpeg",
+            "medium": "https://example.com/3000002-medium.jpeg",
+            "small": "https://example.com/3000002-small.jpeg",
+            "portrait": "https://example.com/p.jpeg",
+            "landscape": "https://example.com/l.jpeg",
+            "tiny": "https://example.com/t.jpeg"
+          }
+        }
+      ]
+    }
+  }
+}

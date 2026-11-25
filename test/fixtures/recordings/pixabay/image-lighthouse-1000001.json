@@ -1,0 +1,13 @@
+{
+  "recordedAt": "2026-11-25",
+  "note": "NOT a live response: a 16x10 placeholder PNG standing in for the image at this URL, made for tests because no Pixabay key was available.",
+  "request": {
+    "method": "GET",
+    "url": "https://pixabay.com/get/sample-lighthouse-1000001_1280.jpg"
+  },
+  "response": {
+    "status": 200,
+    "contentType": "image/png",
+    "bodyBase64": "iVBORw0KGgoAAAANSUhEUgAAABAAAAAKCAYAAAC9vt6cAAAAKElEQVR4AaXBAQEAIAyAME4445jJpj4E25z7PoFEEkkkkUQSSSSRRAv7+QJnZ4GccwAAAABJRU5ErkJggg=="
+  }
+}

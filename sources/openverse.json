@@ -1,0 +1,63 @@
+{
+  "$schema": "./source.schema.json",
+  "id": "openverse",
+  "name": "Openverse",
+  "kind": "api",
+  "enabledByDefault": false,
+  "terms": {
+    "read": "2026-11-25",
+    "links": [
+      { "url": "https://docs.openverse.org/terms_of_service.html", "about": "Terms of service" },
+      { "url": "https://api.openverse.org/v1/schema/", "about": "API description: anonymous access, rate limits, search parameters and fields" }
+    ],
+    "notes": [
+      "API description: \"Openverse provides free and open access to the Openverse API to anonymous and registered users.\" \"Anonymous requests should be sufficient for most users.\" So no key is used.",
+      "Terms: users must respect the terms of each work's Creative Commons license, \"including by providing proper attribution\". So the license comes from each result, and the credit names title, creator and license with links.",
+      "The terms and API description say nothing about hotlinking. Images are downloaded, so a post doesn't depend on the many third-party servers Openverse indexes.",
+      "No cache time is stated; searches are cached for an hour so repeated searches in one session aren't sent again. The terms forbid scraping and working around rate limits.",
+      "Terms: a product built on the API must say it uses Openverse and is not endorsed by it. Draftsman's README says so.",
+      "No endpoint is documented to call when an image is used, so there is no on-pick URL.",
+      "License values, from the API description: by, by-nc, by-nc-nd, by-nc-sa, by-nd, by-sa, cc0, nc-sampling+, pdm, sampling+."
+    ]
+  },
+  "auth": { "type": "none" },
+  "search": {
+    "url": "https://api.openverse.org/v1/images/?q={query}&page_size={count}&mature=false",
+    "results": "results",
+    "maxCount": 20
+  },
+  "fields": {
+    "id": "id",
+    "title": "title",
+    "pageUrl": "foreign_landing_url",
+    "imageUrl": "url",
+    "thumbnailUrl": "thumbnail",
+    "width": "width",
+    "height": "height",
+    "creator": "creator",
+    "creatorUrl": "creator_url"
+  },
+  "license": {
+    "field": "license",
+    "versionField": "license_version",
+    "urlField": "license_url",
+    "map": [
+      { "match": "^by$", "license": "cc-by" },
+      { "match": "^by-sa$", "license": "cc-by-sa" },
+      { "match": "^by-nc$", "license": "cc-by-nc" },
+      { "match": "^by-nc-sa$", "license": "cc-by-nc-sa" },
+      { "match": "^by-nd$", "license": "cc-by-nd" },
+      { "match": "^by-nc-nd$", "license": "cc-by-nc-nd" },
+      { "match": "^cc0$", "license": "cc0" },
+      { "match": "^pdm$", "license": "pdm" },
+      { "match": "^sampling\\+$", "license": "sampling" },
+      { "match": "^nc-sampling\\+$", "license": "nc-sampling" }
+    ]
+  },
+  "use": {
+    "mode": "download",
+    "cacheSeconds": 3600,
+    "prohibited": []
+  },
+  "credit": "[?[{title}]({page})?][? by {creatorLink}?][?, {licenseLink}?], via Openverse"
+}

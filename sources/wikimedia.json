@@ -1,0 +1,77 @@
+{
+  "$schema": "./source.schema.json",
+  "id": "wikimedia",
+  "name": "Wikimedia Commons",
+  "kind": "api",
+  "enabledByDefault": false,
+  "terms": {
+    "read": "2026-11-25",
+    "links": [
+      { "url": "https://commons.wikimedia.org/wiki/Commons:Reusing_content_outside_Wikimedia", "about": "Reusing Commons files: licenses, credit, hotlinking" },
+      { "url": "https://commons.wikimedia.org/wiki/Commons:Credit_line", "about": "What a credit line must hold" },
+      { "url": "https://foundation.wikimedia.org/wiki/Policy:Wikimedia_Foundation_User-Agent_Policy", "about": "User-Agent rules for API clients" },
+      { "url": "https://www.mediawiki.org/wiki/API:Etiquette", "about": "API etiquette: caching, serial requests" },
+      { "url": "https://www.mediawiki.org/wiki/Extension:CommonsMetadata", "about": "The license and author fields (extmetadata)" }
+    ],
+    "notes": [
+      "Reusing page: hotlinking \"is also possible, but is not recommended.\" So images are downloaded.",
+      "Each file has its own license; the author, not the uploader, must be credited; \"If the license requires you to link to or provide a copy of the license, do this.\" So the credit names title, author and license with links.",
+      "CommonsMetadata: LicenseShortName is the \"short human-readable license name\" and more reliable than License; Artist \"might contain complex HTML\", so tags are stripped.",
+      "CommonsMetadata: Restrictions lists \"reuse restrictions such as trademarks or personality rights\", and NonFree true means \"not under a free license\". Either one fails the license check.",
+      "User-Agent policy: requests need a descriptive User-Agent with contact information, or they fail with 403. Draftsman sends its name, version and repository URL.",
+      "API etiquette asks clients to cache data; searches are cached for an hour.",
+      "No endpoint is documented to call when a file is used, so there is no on-pick URL.",
+      "GFDL-only files fail: the license wants a full copy of its text alongside the image."
+    ]
+  },
+  "auth": { "type": "none" },
+  "search": {
+    "url": "https://commons.wikimedia.org/w/api.php?action=query&format=json&formatversion=2&generator=search&gsrsearch=filetype%3Abitmap%20{query}&gsrnamespace=6&gsrlimit={count}&prop=imageinfo&iiprop=url%7Csize%7Cextmetadata&iiurlwidth=1600&iiextmetadatafilter=LicenseShortName%7CLicenseUrl%7CArtist%7CObjectName%7CRestrictions%7CNonFree",
+    "results": "query.pages",
+    "maxCount": 20
+  },
+  "fields": {
+    "id": "pageid",
+    "title": "imageinfo.0.extmetadata.ObjectName.value",
+    "pageUrl": "imageinfo.0.descriptionurl",
+    "imageUrl": "imageinfo.0.thumburl",
+    "thumbnailUrl": "imageinfo.0.thumburl",
+    "width": "imageinfo.0.width",
+    "height": "imageinfo.0.height",
+    "creator": { "path": "imageinfo.0.extmetadata.Artist.value", "html": true }
+  },
+  "license": {
+    "field": "imageinfo.0.extmetadata.LicenseShortName.value",
+    "urlField": "imageinfo.0.extmetadata.LicenseUrl.value",
+    "map": [
+      { "match": "^CC0\\b", "license": "cc0" },
+      { "match": "^(Public domain|PD)\\b", "license": "public-domain" },
+      { "match": "^Public Domain Mark\\b", "license": "pdm" },
+      { "match": "^CC BY-NC-SA\\b", "license": "cc-by-nc-sa" },
+      { "match": "^CC BY-NC-ND\\b", "license": "cc-by-nc-nd" },
+      { "match": "^CC BY-NC\\b", "license": "cc-by-nc" },
+      { "match": "^CC BY-ND\\b", "license": "cc-by-nd" },
+      { "match": "^CC BY-SA\\b", "license": "cc-by-sa" },
+      { "match": "^CC BY(?!-)\\b", "license": "cc-by" },
+      { "match": "^GFDL\\b", "license": "gfdl" }
+    ]
+  },
+  "reject": [
+    {
+      "field": "imageinfo.0.extmetadata.Restrictions.value",
+      "when": "present",
+      "reason": "the file has reuse restrictions (such as trademarks or personality rights) that a person needs to judge"
+    },
+    {
+      "field": "imageinfo.0.extmetadata.NonFree.value",
+      "when": ["true", "True", "1"],
+      "reason": "the file is marked as not under a free license"
+    }
+  ],
+  "use": {
+    "mode": "download",
+    "cacheSeconds": 3600,
+    "prohibited": []
+  },
+  "credit": "[{title}]({page})[? by {creator}?][?, {licenseLink}?], via Wikimedia Commons"
+}

@@ -1,0 +1,63 @@
+{
+  "recordedAt": "2026-11-25",
+  "note": "NOT a live response: no Pixabay key was available when this was made. Field names and shapes follow https://pixabay.com/api/docs/ (read 2026-11-25); the values are placeholders. Replace with a live recording: set the key, then npm run record.",
+  "request": {
+    "method": "GET",
+    "url": "https://pixabay.com/api/?q=lighthouse&per_page=5&image_type=photo&safesearch=true&key=REDACTED"
+  },
+  "response": {
+    "status": 200,
+    "contentType": "application/json",
+    "body": {
+      "total": 2,
+      "totalHits": 2,
+      "hits": [
+        {
+          "id": 1000001,
+          "pageURL": "https://pixabay.com/photos/lighthouse-coast-sea-1000001/",
+          "type": "photo",
+          "tags": "lighthouse, coast, sea",
+          "previewURL": "https://cdn.pixabay.com/photo/sample/lighthouse-1000001_150.jpg",
+          "previewWidth": 150,
+          "previewHeight": 100,
+          "webformatURL": "https://pixabay.com/get/sample-lighthouse-1000001_640.jpg",
+          "webformatWidth": 640,
+          "webformatHeight": 427,
+          "largeImageURL": "https://pixabay.com/get/sample-lighthouse-1000001_1280.jpg",
+          "imageWidth": 4000,
+          "imageHeight": 2667,
+          "imageSize": 2500000,
+          "views": 100,
+          "downloads": 10,
+          "likes": 5,
+          "comments": 1,
+          "user_id": 2000001,
+          "user": "SamplePhotographer",
+          "userImageURL": ""
+        },
+        {
+          "id": 1000002,
+          "type": "photo",
+          "tags": "lighthouse, night",
+          "previewURL": "https://cdn.pixabay.com/photo/sample/lighthouse-1000002_150.jpg",
+          "previewWidth": 150,
+          "previewHeight": 100,
+          "webformatURL": "https://pixabay.com/get/sample-lighthouse-1000002_640.jpg",
+          "webformatWidth": 640,
+          "webformatHeight": 427,
+          "largeImageURL": "https://pixabay.com/get/sample-lighthouse-1000002_1280.jpg",
+          "imageWidth": 3000,
+          "imageHeight": 2000,
+          "imageSize": 1500000,
+          "views": 50,
+          "downloads": 5,
+          "likes": 2,
+          "comments": 0,
+          "user_id": 2000002,
+          "user": "AnotherSample",
+          "userImageURL": ""
+        }
+      ]
+    }
+  }
+}
