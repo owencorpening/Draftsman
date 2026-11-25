@@ -14,6 +14,10 @@ const fixtures = path.resolve('test/fixtures');
 const reference = path.join(fixtures, 'sample-table.png');
 const output = path.resolve('test/output');
 
+// The test browser inherits this: a fixed font setup instead of the
+// machine's own. See test/fixtures/fonts.conf.
+process.env['FONTCONFIG_FILE'] = path.join(fixtures, 'fonts.conf');
+
 // Faint anti-aliasing differences between machines are fine; a changed
 // layout, color, font or digit is not. pixelmatch's threshold sets how
 // different one pixel may be before it counts, which ignores faint shading at

@@ -132,12 +132,14 @@ export async function renderHtml(html: string, options: RenderOptions = {}): Pro
     await page.setContent(pageHtml, { waitUntil: 'load' });
     // document.fonts.check() is no use here: it says true when no face of
     // that family exists at all. Each declared face's own status is checked.
+    // (No named functions inside: tsx injects a __name helper the page lacks.)
     const missing = await page.evaluate(async (families: string[]) => {
       const faces = [...document.fonts];
       await Promise.all(faces.map((f) => f.load().catch(() => undefined)));
       await document.fonts.ready;
-      const loaded = (family: string) => faces.some((f) => f.family.replace(/^["']|["']$/g, '') === family && f.status === 'loaded');
-      return families.filter((family) => !loaded(family));
+      return families.filter(
+        (family) => !faces.some((f) => f.family.replace(/^["']|["']$/g, '') === family && f.status === 'loaded'),
+      );
     }, fonts.map((f) => f.family));
     if (missing.length) throw new Error(`font(s) did not load: ${missing.join(', ')}`);
 
