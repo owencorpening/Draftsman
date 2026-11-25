@@ -16,6 +16,7 @@ You need Node 22.12 or later, and Chrome or Edge for rendering.
 
 ```sh
 npm install
+npm run test-browser   # once: the pinned Chrome for Testing the render test uses (~170 MB)
 npm test
 npm run build
 ```

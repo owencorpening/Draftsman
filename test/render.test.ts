@@ -7,6 +7,7 @@ import { PNG } from 'pngjs';
 import { describe, expect, it } from 'vitest';
 
 import { fillTemplate, renderHtml } from '../src/render/index.js';
+import { TEST_CHROME, testBrowserPath } from './test-browser.js';
 
 const fixtures = path.resolve('test/fixtures');
 const reference = path.join(fixtures, 'sample-table.png');
@@ -24,6 +25,10 @@ const MAX_CHANGED = 8;
 
 describe('render', () => {
   it('renders a sample table that matches the reference image', async () => {
+    const browser = testBrowserPath();
+    if (!existsSync(browser)) {
+      throw new Error(`The render test needs Chrome for Testing ${TEST_CHROME}. Run: npm run test-browser`);
+    }
     const html = fillTemplate(await readFile(path.join(fixtures, 'sample-table.html'), 'utf8'), {
       col1: 'Region',
       col2: 'Storage (acre-ft)',
@@ -34,6 +39,10 @@ describe('render', () => {
       width: 800,
       height: 400,
       scale: 1,
+      executablePath: browser,
+      // Our own fixture with the network off. Ubuntu blocks the sandbox for
+      // Chrome for Testing, so it would not start otherwise.
+      noSandbox: true,
       fonts: [{ family: 'Draftsman Test Sans', path: path.join(fixtures, 'fonts', 'DejaVuSans.ttf') }],
     });
 
@@ -45,6 +54,10 @@ describe('render', () => {
 
     const actual = PNG.sync.read(png);
     const expected = PNG.sync.read(await readFile(reference));
+    if (actual.width !== expected.width || actual.height !== expected.height) {
+      await mkdir(output, { recursive: true });
+      await writeFile(path.join(output, 'sample-table.actual.png'), png);
+    }
     expect({ width: actual.width, height: actual.height }).toEqual({ width: expected.width, height: expected.height });
 
     const diff = new PNG({ width: actual.width, height: actual.height });

@@ -1,4 +1,6 @@
 node_modules/
 dist/
+# The pinned browser the render test uses (npm run test-browser).
+.cache/
 # Written by the render test on a mismatch, for a look at what changed.
 test/output/

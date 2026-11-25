@@ -38,6 +38,12 @@ export interface RenderOptions {
   allowNetwork?: boolean;
   /** Browser executable; default is findBrowser(). */
   executablePath?: string;
+  /**
+   * Run the browser without its sandbox. Only for trusted templates with the
+   * network off, where the system blocks the sandbox (CI containers, Chrome
+   * for Testing on Ubuntu). DRAFTSMAN_NO_SANDBOX=1 does the same.
+   */
+  noSandbox?: boolean;
 }
 
 const FONT_TYPES: Record<string, string> = {
@@ -88,8 +94,8 @@ export async function renderHtml(html: string, options: RenderOptions = {}): Pro
   const { width = 1200, height = 800, scale = 2, selector = 'body', fonts = [], allowNetwork = false } = options;
 
   const args = [...BROWSER_ARGS];
-  // CI containers often can't give Chrome its sandbox; it's opt-in by env, never the default.
-  if (process.env['DRAFTSMAN_NO_SANDBOX'] === '1') args.push('--no-sandbox');
+  // Never the default; see RenderOptions.noSandbox.
+  if (options.noSandbox || process.env['DRAFTSMAN_NO_SANDBOX'] === '1') args.push('--no-sandbox');
 
   const browser: Browser = await puppeteer.launch({
     executablePath: options.executablePath ?? findBrowser(),

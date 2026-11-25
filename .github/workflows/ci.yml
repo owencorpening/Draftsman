@@ -18,11 +18,21 @@ jobs:
       - run: npm ci
       - run: npm run lint
       - run: npm run typecheck
+      # The render test uses one pinned Chrome for Testing build (see
+      # test/test-browser.ts), cached between runs.
+      - uses: actions/cache@v6
+        with:
+          path: .cache/test-browser
+          key: test-browser-${{ runner.os }}-${{ hashFiles('test/test-browser.ts') }}
+      - run: npm run test-browser
       - run: npm test
-        env:
-          # The runner's preinstalled Google Chrome renders the images.
-          # CI containers can't always give Chrome its sandbox.
-          DRAFTSMAN_NO_SANDBOX: '1'
+      # On a render mismatch, keep what CI drew and the diff for a look.
+      - if: failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: render-output
+          path: test/output/
+          if-no-files-found: ignore
 
   private-names:
     name: Private names check
