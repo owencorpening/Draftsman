@@ -100,7 +100,7 @@ Draftsman works on files on your computer, so it needs an AI app that runs local
 - **Picking:** an image grid through MCP Apps where the host shows one (experimental in VS Code). Otherwise a plain list in the chat with links. Forms through MCP elicitation where the host supports it.
 - **Image sources:** generic source definitions in JSON (search URL, auth, field map, license map and rules such as download or hotlink, credit format, cache time and the URL to call when a photo is picked). Pixabay is the default source. Openverse, Wikimedia Commons and a local folder are ready-made presets, off until the user turns them on. Pexels is a preset only for people who already have a Pexels key, because Pexels paused new API keys in November 2026 with no date to resume. Users add their own keys, kept in the OS keychain or an environment variable and never shipped.
 - **Image generators:** the same generic approach, starting with OpenAI-style image endpoints, always on the user's own key.
-- **Table data:** each table image links to a new Google Sheet made in the user's own Google account, viewable by anyone with the link. It asks only for Google's narrowest Drive permission, which covers files the app creates and which Google rates non-sensitive, so no Google app review should be needed. A test still has to confirm that this permission also lets it share the new sheet. People who don't sign in to Google get the styled image alone, with no link.
+- **Table data:** each table image links to a new Google Sheet made in the user's own Google account, viewable by anyone with the link. It asks only for Google's narrowest Drive permission, `drive.file`, which covers files the app creates. Google rates it non-sensitive, so the full verification for sensitive scopes doesn't apply, but `drive.file` still needs Google's basic (brand) verification for the consent screen to show Draftsman's name: a home page on a domain the author owns, a privacy policy, and the consent screen set up to match. That verification blocks the first release (see Milestones). A test still has to confirm that this permission also lets it share the new sheet. People who don't sign in to Google get the styled image alone, with no link.
 - **Where files go:** a folder in the writer's project by default. An optional destination pushes images to a git repo the user owns and uses its public file links, for platforms that take image links.
 
 ### Tools the server offers
@@ -295,12 +295,13 @@ The wider scope moves the first release to mid-January.
 | Dec 22 | Pull quotes and blockquotes, skills and plugin packaging, working in VS Code and Claude Code |
 | Dec 29 | Lists and the carousel |
 | Jan 5 | Review, optional destinations and generators, use on three real articles |
-| Jan 12 | Listing and first release. LinkedIn post after. |
+| Jan 12 | Listing and first release. Release blocker: Google's basic (brand) verification of the Draftsman OAuth client has passed, with its home page, privacy policy and consent screen. LinkedIn post after. |
 
 ## Decisions (Nov 25)
 
 1. The name stays Draftsman, though it now covers more than images. A Marketplace and Open VSX name check comes before the first publish.
 2. Version 1 promises VS Code and Claude Code. Cursor and the other apps that work are best effort: supported if they run it, but not tested before each release.
+3. Google sign-in uses its own OAuth client, a Desktop app client named Draftsman, published to Production. In Testing, Google ends every sign-in after seven days.
 
 ## Sources
 
