@@ -1,0 +1,32 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+  html { background: #ffffff; }
+  body { margin: 0; display: inline-block; background: #ffffff; }
+  figure { margin: 0; padding: 24px; font-family: "Draftsman Test Sans"; color: #1f2933; }
+  table { border-collapse: collapse; font-size: 15px; }
+  th, td { padding: 8px 16px; text-align: left; border-bottom: 1px solid #d5dbe1; }
+  th { background: #eef2f6; color: #3e4c59; font-size: 13px; letter-spacing: 0.04em; text-transform: uppercase; }
+  td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
+  tr:last-child td { border-bottom: 2px solid #3e4c59; }
+  figcaption { margin-top: 12px; font-size: 13px; color: #52606d; }
+</style>
+</head>
+<body>
+<figure>
+  <table>
+    <thead>
+      <tr><th>{{col1}}</th><th class="num">{{col2}}</th><th class="num">{{col3}}</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>North basin</td><td class="num">1,240</td><td class="num">−12%</td></tr>
+      <tr><td>Central valley</td><td class="num">860</td><td class="num">−4%</td></tr>
+      <tr><td>Coastal plain</td><td class="num">2,015</td><td class="num">+3%</td></tr>
+    </tbody>
+  </table>
+  <figcaption>{{caption}}</figcaption>
+</figure>
+</body>
+</html>

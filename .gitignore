@@ -1,0 +1,4 @@
+node_modules/
+dist/
+# Written by the render test on a mismatch, for a look at what changed.
+test/output/
