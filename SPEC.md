@@ -194,6 +194,51 @@ Tests: `test/render.test.ts`
 
 Tests: `test/check-private-names.test.ts`; CI: `.github/workflows/ci.yml`
 
+### Images: sources, `search_images`, `check_license` and `place_image`
+
+Source definitions and presets
+
+- Each source is one JSON file: search URL, auth, field map, license map, the download or hotlink rule, credit format, cache time, an optional on-pick URL, and links to the terms its rules came from. A JSON Schema describes the format, and the committed schema matches the code.
+- Every definition, preset or the user's own, is checked when the server starts. A bad one stops it with an error naming the file, the field and what is wrong.
+- Presets: Pixabay is on by default. Openverse, Wikimedia Commons, a local folder and Pexels are off until the user turns them on. Pexels is for people who already have a key.
+- Each preset's rules follow its terms as read on Nov 25, 2026, and cite them: Pixabay images are downloaded, never hotlinked, and its searches are cached for 24 hours. No preset has an on-pick URL, because none of the five sources asks for one.
+
+Tests: `test/sources.test.ts`
+
+Keys
+
+- A key comes from an environment variable or the OS keychain. A source that needs a key and has none is skipped with a message saying how to add one, and the other sources still search.
+- No key appears in the repo, test recordings, logs, provenance files, the search cache or tool results. A test runs a search and a placement with a known fake key and scans all of them for it, and scans the repo for anything shaped like a Pixabay or Pexels key.
+
+Tests: `test/keys.test.ts`, `test/no-keys.test.ts`
+
+`search_images`
+
+- It searches the enabled sources and returns candidates with source, title, creator, page and thumbnail links, size, and the license as the source states it. One source failing doesn't stop the others.
+- A repeated search within a source's cache time is answered from the cache.
+- Tests use recorded responses only, with keys scrubbed. A request with no recording fails the test, so no test reaches a live API.
+
+Tests: `test/images.test.ts`
+
+`check_license`
+
+- It passes only when the license is known and allows both commercial use and changes. Unknown or missing licenses, non-commercial, no-derivatives and sampling licenses fail, with the reason. So does a file the source flags as restricted (trademarks, personality rights) or non-free.
+- A pass lists what the license still asks for: credit, share-alike, and the source's prohibited uses.
+- Each preset's license mapping is tested with at least one pass and one rejection, using recorded results.
+
+Tests: `test/licenses.test.ts`
+
+`place_image`
+
+- It refuses any image that hasn't passed `check_license` in this session, and any image that no search returned.
+- It downloads or hotlinks as the source's rule says. A downloaded image goes in an `images` folder beside the article.
+- It replaces the placeholder at the given line with the image and its alt text, and adds the credit in the source's format as its own paragraph below.
+- It writes a provenance file beside the image: source and terms link, page, original URL, creator, license and its check, credit, alt text, the article and line, the file's hash, and when it was placed.
+- It calls the source's on-pick URL where there is one, and records the result. A test source covers this, since no preset has one.
+- If a step fails, the article is left unchanged.
+
+Tests: `test/images.test.ts`
+
 ## Not in version 1
 
 - A paid tier.
