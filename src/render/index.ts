@@ -68,6 +68,14 @@ async function fontFaceCss(fonts: FontFile[]): Promise<string> {
   return rules.join('\n');
 }
 
+/** Puts a <style> block at the start of the document's <head>, or of the document if it has none. */
+function withHeadStyle(html: string, css: string): string {
+  const style = `<style>\n${css}\n</style>`;
+  const head = /<head[^>]*>/i.exec(html);
+  if (head) return html.slice(0, head.index + head[0].length) + style + html.slice(head.index + head[0].length);
+  return style + html;
+}
+
 /** Fills {{name}} markers in a template, HTML-escaping each value. Unknown markers are an error. */
 export function fillTemplate(template: string, values: Record<string, string | number>): string {
   const escape = (s: string): string =>
@@ -115,11 +123,23 @@ export async function renderHtml(html: string, options: RenderOptions = {}): Pro
       });
     }
 
-    await page.setContent(html, { waitUntil: 'load' });
-    if (fonts.length) await page.addStyleTag({ content: await fontFaceCss(fonts) });
-    await page.evaluate(async () => {
+    // The font rules go into the page before it loads, then each font is
+    // loaded and checked by name. Adding them afterwards and waiting on
+    // document.fonts.ready raced: in CI the shot was taken with the fallback
+    // font (Nov 25), which no test here could see because this machine's
+    // fallback was the same font.
+    const pageHtml = fonts.length ? withHeadStyle(html, await fontFaceCss(fonts)) : html;
+    await page.setContent(pageHtml, { waitUntil: 'load' });
+    // document.fonts.check() is no use here: it says true when no face of
+    // that family exists at all. Each declared face's own status is checked.
+    const missing = await page.evaluate(async (families: string[]) => {
+      const faces = [...document.fonts];
+      await Promise.all(faces.map((f) => f.load().catch(() => undefined)));
       await document.fonts.ready;
-    });
+      const loaded = (family: string) => faces.some((f) => f.family.replace(/^["']|["']$/g, '') === family && f.status === 'loaded');
+      return families.filter((family) => !loaded(family));
+    }, fonts.map((f) => f.family));
+    if (missing.length) throw new Error(`font(s) did not load: ${missing.join(', ')}`);
 
     const element = await page.$(selector);
     if (!element) throw new Error(`nothing in the template matches "${selector}"`);

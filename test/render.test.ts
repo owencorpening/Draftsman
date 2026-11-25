@@ -1,5 +1,6 @@
 import { existsSync } from 'node:fs';
-import { mkdir, readFile, writeFile } from 'node:fs/promises';
+import { mkdir, mkdtemp, readFile, writeFile } from 'node:fs/promises';
+import { tmpdir } from 'node:os';
 import path from 'node:path';
 
 import pixelmatch from 'pixelmatch';
@@ -68,5 +69,16 @@ describe('render', () => {
       await writeFile(path.join(output, 'sample-table.diff.png'), PNG.sync.write(diff));
     }
     expect(changed, `${changed} pixels differ from the reference; see test/output/`).toBeLessThanOrEqual(MAX_CHANGED);
+  });
+
+  it('fails loudly when a font does not load, instead of drawing with a fallback', async () => {
+    const browser = testBrowserPath();
+    if (!existsSync(browser)) throw new Error(`Run: npm run test-browser`);
+    const dir = await mkdtemp(path.join(tmpdir(), 'draftsman-font-'));
+    const broken = path.join(dir, 'broken.ttf');
+    await writeFile(broken, 'this is not a font');
+    await expect(
+      renderHtml('<p style="font-family: Broken">x</p>', { executablePath: browser, noSandbox: true, fonts: [{ family: 'Broken', path: broken }] }),
+    ).rejects.toThrow(/did not load: Broken/);
   });
 });
