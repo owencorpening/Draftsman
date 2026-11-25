@@ -150,6 +150,50 @@ The image placeholder is a markdown image with a `draftsman:` address, like `![d
 - The README covers it.
 - Any new network call has a recorded test response.
 
+## Acceptance checks
+
+One list per piece, written before its code or with it. Each list names the tests that hold it.
+
+### Server
+
+- It runs over stdio and agrees protocol 2026-07-28 with a client that asks for it. A client that opens with the older `initialize` handshake is still served.
+- It offers the tools built so far, and marks the read-only ones read-only.
+- A tool given bad input returns an error the AI can read and act on, and changes no file.
+
+Tests: `test/server.test.ts`
+
+### Image placeholders: `find_slots` and `mark_slot`
+
+- `find_slots` lists every `![description](draftsman:pending)` in a .md or .markdown file, with its line, column and description, the block that holds it, and the blocks before and after.
+- It accepts a title, angle brackets around the link, escaped characters and one level of brackets in the description, and several placeholders on one line.
+- It ignores placeholders in fenced code (including a fence that is never closed) and in inline code, and ignores ordinary images and other `draftsman:` addresses.
+- `mark_slot` puts one placeholder at the given line as its own block, adds blank lines only where needed, and returns it as `find_slots` would.
+- It refuses, and leaves the file unchanged, for: a line that would split a block, a line inside a code block, a line outside the file, an empty or multi-line description, and a file that isn't markdown or doesn't exist.
+- It keeps the file's line endings and whether the file ends with a newline.
+- A description with brackets or backslashes comes back from `find_slots` unchanged.
+
+Tests: `test/slots.test.ts`, `test/server.test.ts`
+
+### Renderer
+
+- It turns an HTML template into a PNG with an installed Chrome or Edge, or the browser named in `DRAFTSMAN_BROWSER`. With none, it fails with a message saying what to install, and downloads nothing.
+- It makes no network requests unless asked to.
+- Fonts passed in are embedded. A font that doesn't load is an error, never a silent switch to another font.
+- A sample table renders within 8 pixels of its reference image on any machine. Changing one digit in the table fails the comparison.
+- The test renders with one pinned Chrome for Testing build and a fixed font setup, so a browser update or a machine's font settings can't change the result. Draftsman itself still uses the installed browser.
+
+Tests: `test/render.test.ts`
+
+### Private names check and CI
+
+- `scripts/check-private-names.sh` fails if any pattern in `PRIVATE_NAMES` (one per line, any case) appears in a file's contents or path, or in a commit message. Files git ignores are skipped; new files that aren't ignored are checked.
+- Its output says where a match is, never the matching text or the pattern.
+- It fails when `PRIVATE_NAMES` is empty or unset, or holds an invalid pattern, so a missing secret can't pass.
+- The patterns are never written into the repo.
+- CI runs lint, the type check, the tests and the name check on every push. The name check reads the `PRIVATE_NAMES` repository secret.
+
+Tests: `test/check-private-names.test.ts`; CI: `.github/workflows/ci.yml`
+
 ## Not in version 1
 
 - A paid tier.
