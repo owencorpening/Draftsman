@@ -239,6 +239,41 @@ Tests: `test/licenses.test.ts`
 
 Tests: `test/images.test.ts`
 
+### Tables: `find_tables`, `render_table` and `renumber_figures`
+
+Finding tables
+
+- `find_tables` lists every markdown pipe table with its lines, header, column alignment, rows and the paragraph before it. Tables inside code are ignored. Pipes in inline code, and escaped pipes, stay inside their cell.
+
+Tests: `test/tables.test.ts`
+
+Rendering
+
+- `render_table` turns one table into a PNG with the installed Chrome or Edge, styled by a style file: colors, font, column alignment and an optional watermark. Bold, italic and code in cells keep their look; links show as their text.
+- A neutral default style and a sample brand style ship with it, and the user can name their own in the config. Every style file is checked when the server starts, with an error naming the file and field.
+- Rendered tables match reference images within the renderer's tolerance, for both shipped styles.
+- In the article, the table is replaced by the image, linked to the sheet when there is one, with alt text and a numbered caption below it ("Figure N. …"). The image goes in the `images` folder beside the article with a provenance file holding the original table, the sheet, the style and the file's hash. If a step fails, the article is left unchanged.
+
+Tests: `test/render-table.test.ts`
+
+Google Sheets
+
+- Signing in to Google is a one-time command run in a terminal. It asks only for the `drive.file` permission, uses PKCE with a loopback address and no client secret, and keeps the refresh token in the OS keychain or an environment variable, never in a file Draftsman writes.
+- With Google signed in, each rendered table gets a new Google Sheet in the user's Drive holding its data, shared so anyone with the link can view it, and the image links to the sheet.
+- Without Google, or when creating or sharing the sheet fails, the table still becomes an image, unlinked, and the result says why.
+- Tests use recorded responses for the Sheets, Drive and token endpoints. Tokens never appear in files, logs, provenance or tool results.
+- Still to check live: that `drive.file` allows sharing the new sheet with anyone who has the link. That needs a run with the real OAuth client, and stays listed here until it's done.
+
+Tests: `test/google.test.ts`, `test/no-keys.test.ts`
+
+Figure numbering
+
+- `renumber_figures` numbers every caption that starts "Figure N" or "Fig. N", in document order, and updates references in the text ("Figure 3", "Figures 2 and 3", "Figs. 2–4") so they follow their figures. Code is left alone.
+- Numbers are in order after a figure is added, moved or deleted, and references still point at the same figures. A reference to a deleted figure is left as it is and reported.
+- `render_table` numbers its new caption the same way.
+
+Tests: `test/figures.test.ts`
+
 ## Not in version 1
 
 - A paid tier.
