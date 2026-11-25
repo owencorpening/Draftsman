@@ -1,0 +1,19 @@
+{
+  "recordedAt": "2026-11-25",
+  "note": "NOT a live response: built from Google’s documentation for spreadsheets.values.update (https://developers.google.com/workspace/sheets/api/reference/rest/v4/spreadsheets.values/update, read 2026-11-25), because no Google sign-in was available. Values are placeholders.",
+  "request": {
+    "method": "PUT",
+    "url": "https://sheets.googleapis.com/v4/spreadsheets/1SampleSheetIdForDraftsmanTests/values/Data!A1?valueInputOption=USER_ENTERED"
+  },
+  "response": {
+    "status": 200,
+    "contentType": "application/json",
+    "body": {
+      "spreadsheetId": "1SampleSheetIdForDraftsmanTests",
+      "updatedRange": "Data!A1:C4",
+      "updatedRows": 4,
+      "updatedColumns": 3,
+      "updatedCells": 12
+    }
+  }
+}

@@ -13,9 +13,13 @@ import { defaultCacheDir } from './cache.js';
 import { findSlotsInFile, markSlotInFile } from './files.js';
 import { liveHttp, type Http } from './http.js';
 import { ImageError, ImageService } from './images.js';
-import { keyLookup, type KeyLookup } from './keys.js';
+import { clientId, Google, keychainStore, runWithInput, signIn } from './google.js';
+import { keyLookup, scrubKeys, type KeyLookup } from './keys.js';
+import type { RenderOptions } from './render/index.js';
 import { SlotError } from './slots.js';
-import { DefinitionError, loadSources } from './sources/load.js';
+import { DefinitionError, loadConfig, loadSources } from './sources/load.js';
+import { loadStyle } from './styles.js';
+import { TableFigures, type Render } from './table-figures.js';
 import { VERSION } from './version.js';
 
 export { VERSION } from './version.js';
@@ -54,29 +58,50 @@ export interface ServerOptions {
   keys?: KeyLookup;
   cacheDir?: string;
   presetsDir?: string;
+  stylesDir?: string;
+  env?: NodeJS.ProcessEnv;
+  /** Rendering; tests pass a pinned browser through renderOptions. */
+  render?: Render;
+  renderOptions?: RenderOptions;
   log?: (message: string) => void;
   now?: () => Date;
 }
 
 /**
- * Builds the server. Every source definition is checked here; a bad one
- * throws a DefinitionError naming the file, the field and the problem.
+ * Builds the server. Every source definition and style is checked here; a
+ * bad one throws a DefinitionError naming the file, the field and the problem.
  */
 export function createServer(options: ServerOptions = {}): McpServer {
   const cwd = options.cwd ?? process.cwd();
+  const env = options.env ?? process.env;
   const { sources, config } = loadSources(cwd, options.presetsDir);
+  const style = loadStyle(config.style, cwd, options.stylesDir);
+  const http = options.http ?? liveHttp;
+  const keys = options.keys ?? keyLookup(env);
+  const log = options.log ?? ((m: string) => console.error(`draftsman: ${m}`));
   const images = new ImageService({
     sources,
     config,
     cwd,
-    http: options.http ?? liveHttp,
-    keys: options.keys ?? keyLookup(),
-    cacheDir: options.cacheDir ?? defaultCacheDir(),
-    log: options.log ?? ((m) => console.error(`draftsman: ${m}`)),
+    http,
+    keys,
+    cacheDir: options.cacheDir ?? defaultCacheDir(env),
+    log,
+    ...(options.now ? { now: options.now } : {}),
+  });
+  const google = new Google({ http, keys, clientId: clientId(env, config.google.clientId), ...(options.now ? { now: () => options.now!().getTime() } : {}) });
+  const tables = new TableFigures({
+    cwd,
+    imagesFolder: config.imagesFolder,
+    style,
+    google,
+    ...(options.render ? { render: options.render } : {}),
+    ...(options.renderOptions ? { renderOptions: options.renderOptions } : {}),
+    log: (m) => log(scrubKeys(m, google.secrets)),
     ...(options.now ? { now: options.now } : {}),
   });
   const server = new McpServer({ name: 'draftsman', version: VERSION }, { capabilities: { tools: {} } });
-  const scrub = (s: string) => images.scrub(s);
+  const scrub = (s: string) => images.scrub(scrubKeys(s, google.secrets));
 
   server.registerTool(
     'find_slots',
@@ -170,22 +195,104 @@ export function createServer(options: ServerOptions = {}): McpServer {
     ({ path, line, ref, alt }) => run(async () => ({ ...(await images.place({ path, line, ref, ...(alt ? { alt } : {}) })) }), scrub),
   );
 
+  const tableShape = z.object({
+    startLine: z.number(),
+    endLine: z.number(),
+    header: z.array(z.string()),
+    align: z.array(z.enum(['left', 'center', 'right']).nullable()),
+    rows: z.array(z.array(z.string())),
+    markdown: z.string(),
+    before: z.string(),
+  });
+
+  server.registerTool(
+    'find_tables',
+    {
+      title: 'Find tables',
+      description:
+        'List the markdown tables in an article: their lines, header, column alignment, rows, and the paragraph before ' +
+        'each, so you can write a caption. Tables inside code are ignored.',
+      inputSchema: z.object({ path: z.string().describe('The article, a .md or .markdown file') }),
+      outputSchema: z.object({ path: z.string(), tables: z.array(tableShape) }),
+      annotations: { readOnlyHint: true, openWorldHint: false },
+    },
+    ({ path }) => run(async () => ({ ...(await tables.find(path)) }), scrub),
+  );
+
+  server.registerTool(
+    'render_table',
+    {
+      title: 'Turn a table into a figure',
+      description:
+        'Turn one markdown table into a styled image with a numbered caption ("Figure N. …"), in place of the table. ' +
+        'When the user is signed in to Google, the data goes into a new Google Sheet that anyone with the link can view, ' +
+        'and the image links to it, so the table shows on platforms that can’t render tables and readers can still use ' +
+        'the numbers. Without Google the image goes in unlinked and the result says why. Figure numbers in the whole ' +
+        'article are updated. Write a short caption saying what the table shows.',
+      inputSchema: z.object({
+        path: z.string().describe('The article, a .md or .markdown file'),
+        line: z.number().int().min(1).describe('Any line of the table, e.g. its startLine from find_tables'),
+        caption: z.string().min(1).describe('What the table shows, one line, without "Figure N."'),
+        alt: z.string().optional().describe('Alt text; by default it names the table’s columns and row count'),
+      }),
+      annotations: { readOnlyHint: false, destructiveHint: false, idempotentHint: false, openWorldHint: true },
+    },
+    ({ path, line, caption, alt }) => run(async () => ({ ...(await tables.render({ path, line, caption, ...(alt ? { alt } : {}) })) }), scrub),
+  );
+
+  server.registerTool(
+    'renumber_figures',
+    {
+      title: 'Renumber figures',
+      description:
+        'Put every figure caption ("Figure N." or "Fig. N:") in order, 1, 2, 3 …, and update references in the text ' +
+        '("Figure 3", "Figures 2 and 3", "Figs. 2–4") so they still point at the same figures. Use after adding, moving or ' +
+        'deleting a figure. References to a figure that no longer exists are left alone and listed under problems.',
+      inputSchema: z.object({ path: z.string().describe('The article, a .md or .markdown file') }),
+      annotations: { readOnlyHint: false, destructiveHint: false, idempotentHint: true, openWorldHint: false },
+    },
+    ({ path }) =>
+      run(async () => {
+        const { text: _text, ...r } = await tables.renumber(path);
+        return { ...r };
+      }, scrub),
+  );
+
   return server;
+}
+
+/** `draftsman google-sign-in`: the one-time Google sign-in, run in a terminal. */
+async function googleSignInCommand(): Promise<void> {
+  const { config } = loadConfig(process.cwd());
+  const id = clientId(process.env, config.google.clientId);
+  if (!id) {
+    console.error('draftsman: no Google OAuth client ID. Set DRAFTSMAN_GOOGLE_CLIENT_ID, or google.clientId in .draftsman/config.json.');
+    process.exit(1);
+  }
+  await signIn({ http: liveHttp, clientId: id, store: keychainStore(runWithInput), say: (m) => console.error(m) });
+  console.error('Signed in to Google. Tables will now link to new sheets in your Drive.');
 }
 
 // Start serving when run as a program, not when imported by tests.
 const entry = process.argv[1];
 if (entry && realpathSync(entry) === realpathSync(fileURLToPath(import.meta.url))) {
-  // Check every source definition before serving: a bad one stops here with
-  // a readable error instead of failing on the first search.
-  try {
-    createServer();
-  } catch (e) {
-    if (!(e instanceof DefinitionError)) throw e;
-    console.error(`draftsman: can't start.\n${e.message}`);
-    process.exit(1);
+  if (process.argv[2] === 'google-sign-in') {
+    googleSignInCommand().catch((e: Error) => {
+      console.error(`draftsman: ${e.message}`);
+      process.exit(1);
+    });
+  } else {
+    // Check every source definition and style before serving: a bad one stops
+    // here with a readable error instead of failing on first use.
+    try {
+      createServer();
+    } catch (e) {
+      if (!(e instanceof DefinitionError)) throw e;
+      console.error(`draftsman: can't start.\n${e.message}`);
+      process.exit(1);
+    }
+    // serveStdio speaks protocol 2026-07-28 and still serves hosts that open the
+    // older way, from the same factory.
+    serveStdio(() => createServer(), { onerror: (e) => console.error(`draftsman: ${e.message}`) });
   }
-  // serveStdio speaks protocol 2026-07-28 and still serves hosts that open the
-  // older way, from the same factory.
-  serveStdio(() => createServer(), { onerror: (e) => console.error(`draftsman: ${e.message}`) });
 }

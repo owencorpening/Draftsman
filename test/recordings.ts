@@ -16,7 +16,7 @@ export const RECORDINGS = path.resolve('test/fixtures/recordings');
 export interface Recording {
   recordedAt: string;
   note: string;
-  request: { method: 'GET' | 'POST'; url: string };
+  request: { method: 'GET' | 'POST' | 'PUT'; url: string };
   response: { status: number; contentType: string; body?: unknown; bodyBase64?: string };
 }
 

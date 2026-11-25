@@ -82,6 +82,10 @@ export const Config = z.strictObject({
   extraSources: z.array(z.string()).default([]),
   /** Where downloaded images go, relative to the article. */
   imagesFolder: z.string().min(1).default('images'),
+  /** The style for rendered images: a shipped style's id, or a path to your own style file. */
+  style: z.string().min(1).default('default'),
+  /** Google sign-in. The client ID isn't secret; DRAFTSMAN_GOOGLE_CLIENT_ID overrides it. */
+  google: z.strictObject({ clientId: z.string().min(1).optional() }).default({}),
 });
 export type Config = z.infer<typeof Config>;
 

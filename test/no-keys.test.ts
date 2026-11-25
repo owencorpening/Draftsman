@@ -105,6 +105,42 @@ describe('keys never leak', () => {
     for (const text of [...logs, ...results]) expect(text).not.toContain(PIXABAY_KEY);
   });
 
+  it('Google tokens leave no trace either: a table rendered with a sheet, and an error that echoes the token', async () => {
+    const REFRESH = 'test-refresh-' + 'r'.repeat(20);
+    const ACCESS = 'ya29.test-access-' + 'a'.repeat(20);
+    const token = { ...loadRecording('google', 'token-refresh'), response: { status: 200, contentType: 'application/json', body: { access_token: ACCESS, expires_in: 3599, token_type: 'Bearer' } } };
+    const echo = {
+      ...loadRecording('google', 'permissions-create'),
+      response: { status: 401, contentType: 'application/json', body: { error: { message: `Bad credentials: Bearer ${ACCESS}` } } },
+    };
+    const table = '| a | b |\n|---|---|\n| 1 | 2 |\n';
+    const ws = await workspace({ article: table, config: { google: { clientId: 'test-client.apps.googleusercontent.com' } } });
+    const logs: string[] = [];
+    const server = createServer({
+      cwd: ws.dir,
+      cacheDir: ws.cacheDir,
+      env: {},
+      http: replayHttp([], [token, echo]).http,
+      keys: fakeKeys({ DRAFTSMAN_GOOGLE_REFRESH_TOKEN: REFRESH }),
+      render: async () => Buffer.from('png'),
+      log: (m) => logs.push(m),
+    });
+    const [a, b] = InMemoryTransport.createLinkedPair();
+    await server.connect(b);
+    const client = new Client({ name: 'test', version: '0' });
+    await client.connect(a);
+    clients.push(client);
+
+    const r = await client.callTool({ name: 'render_table', arguments: { path: 'post.md', line: 1, caption: 'Numbers' } });
+    expect(r.isError).toBeFalsy();
+    const result = JSON.stringify(r);
+    expect(result).toContain('Bad credentials: Bearer REDACTED');
+    for (const text of [result, ...logs, ...filesUnder(ws.dir).map((f) => readFileSync(f).toString('latin1'))]) {
+      expect(text).not.toContain(REFRESH);
+      expect(text).not.toContain(ACCESS);
+    }
+  });
+
   it('the repo, test recordings included, holds nothing shaped like a key, and none of the keys set here', () => {
     const files = execFileSync('git', ['ls-files', '-z', '--cached', '--others', '--exclude-standard'], { encoding: 'utf8' })
       .split('\0')

@@ -9,3 +9,7 @@ import { sourceJsonSchema } from '../src/sources/schema.js';
 
 await writeFile('sources/source.schema.json', JSON.stringify(sourceJsonSchema(), null, 2) + '\n');
 console.log('wrote sources/source.schema.json');
+
+const { styleJsonSchema } = await import('../src/styles.js');
+await writeFile('styles/style.schema.json', JSON.stringify(styleJsonSchema(), null, 2) + '\n');
+console.log('wrote styles/style.schema.json');

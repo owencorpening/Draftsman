@@ -1,0 +1,321 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "$schema": {
+      "type": "string"
+    },
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9-]*$"
+    },
+    "name": {
+      "type": "string",
+      "minLength": 1
+    },
+    "fonts": {
+      "type": "object",
+      "properties": {
+        "text": {
+          "type": "object",
+          "properties": {
+            "family": {
+              "type": "string",
+              "minLength": 1,
+              "description": "The name the images use for this font"
+            },
+            "faces": {
+              "minItems": 1,
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "file": {
+                    "type": "string",
+                    "minLength": 1,
+                    "description": "Font file, relative to the style file"
+                  },
+                  "weight": {
+                    "default": "normal",
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "const": "normal"
+                      },
+                      {
+                        "type": "string",
+                        "const": "bold"
+                      },
+                      {
+                        "type": "integer",
+                        "minimum": 100,
+                        "maximum": 900
+                      }
+                    ]
+                  },
+                  "style": {
+                    "default": "normal",
+                    "type": "string",
+                    "enum": [
+                      "normal",
+                      "italic"
+                    ]
+                  }
+                },
+                "required": [
+                  "file"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          "required": [
+            "family",
+            "faces"
+          ],
+          "additionalProperties": false
+        },
+        "heading": {
+          "type": "object",
+          "properties": {
+            "family": {
+              "type": "string",
+              "minLength": 1,
+              "description": "The name the images use for this font"
+            },
+            "faces": {
+              "minItems": 1,
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "file": {
+                    "type": "string",
+                    "minLength": 1,
+                    "description": "Font file, relative to the style file"
+                  },
+                  "weight": {
+                    "default": "normal",
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "const": "normal"
+                      },
+                      {
+                        "type": "string",
+                        "const": "bold"
+                      },
+                      {
+                        "type": "integer",
+                        "minimum": 100,
+                        "maximum": 900
+                      }
+                    ]
+                  },
+                  "style": {
+                    "default": "normal",
+                    "type": "string",
+                    "enum": [
+                      "normal",
+                      "italic"
+                    ]
+                  }
+                },
+                "required": [
+                  "file"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          "required": [
+            "family",
+            "faces"
+          ],
+          "additionalProperties": false
+        },
+        "code": {
+          "type": "object",
+          "properties": {
+            "family": {
+              "type": "string",
+              "minLength": 1,
+              "description": "The name the images use for this font"
+            },
+            "faces": {
+              "minItems": 1,
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "file": {
+                    "type": "string",
+                    "minLength": 1,
+                    "description": "Font file, relative to the style file"
+                  },
+                  "weight": {
+                    "default": "normal",
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "const": "normal"
+                      },
+                      {
+                        "type": "string",
+                        "const": "bold"
+                      },
+                      {
+                        "type": "integer",
+                        "minimum": 100,
+                        "maximum": 900
+                      }
+                    ]
+                  },
+                  "style": {
+                    "default": "normal",
+                    "type": "string",
+                    "enum": [
+                      "normal",
+                      "italic"
+                    ]
+                  }
+                },
+                "required": [
+                  "file"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          "required": [
+            "family",
+            "faces"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "text"
+      ],
+      "additionalProperties": false
+    },
+    "colors": {
+      "type": "object",
+      "properties": {
+        "background": {
+          "type": "string",
+          "pattern": "^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})$"
+        },
+        "text": {
+          "type": "string",
+          "pattern": "^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})$"
+        },
+        "muted": {
+          "type": "string",
+          "pattern": "^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})$"
+        },
+        "headerBackground": {
+          "type": "string",
+          "pattern": "^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})$"
+        },
+        "headerText": {
+          "type": "string",
+          "pattern": "^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})$"
+        },
+        "rule": {
+          "type": "string",
+          "pattern": "^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})$"
+        },
+        "strongRule": {
+          "type": "string",
+          "pattern": "^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})$"
+        },
+        "stripe": {
+          "type": "string",
+          "pattern": "^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})$"
+        }
+      },
+      "required": [
+        "background",
+        "text",
+        "muted",
+        "headerBackground",
+        "headerText",
+        "rule",
+        "strongRule"
+      ],
+      "additionalProperties": false
+    },
+    "table": {
+      "type": "object",
+      "properties": {
+        "fontSize": {
+          "type": "number",
+          "minimum": 8,
+          "maximum": 40
+        },
+        "headerFontSize": {
+          "type": "number",
+          "minimum": 8,
+          "maximum": 40
+        },
+        "uppercaseHeader": {
+          "type": "boolean"
+        },
+        "padding": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 60,
+          "description": "Padding around the table, in pixels"
+        },
+        "maxWidth": {
+          "type": "number",
+          "minimum": 200,
+          "maximum": 4000
+        }
+      },
+      "required": [
+        "fontSize",
+        "headerFontSize",
+        "uppercaseHeader",
+        "padding",
+        "maxWidth"
+      ],
+      "additionalProperties": false
+    },
+    "watermark": {
+      "type": "object",
+      "properties": {
+        "text": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 80
+        },
+        "position": {
+          "type": "string",
+          "enum": [
+            "bottom-right",
+            "bottom-left"
+          ]
+        }
+      },
+      "required": [
+        "text",
+        "position"
+      ],
+      "additionalProperties": false
+    },
+    "promptStyle": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "id",
+    "name",
+    "fonts",
+    "colors",
+    "table"
+  ],
+  "additionalProperties": false,
+  "title": "Draftsman style"
+}

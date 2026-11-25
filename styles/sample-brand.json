@@ -1,0 +1,44 @@
+{
+  "$schema": "./style.schema.json",
+  "id": "sample-brand",
+  "name": "Sample brand",
+  "fonts": {
+    "text": {
+      "family": "Brand Sans",
+      "faces": [
+        { "file": "fonts/DejaVuSans.ttf", "weight": "normal" },
+        { "file": "fonts/DejaVuSans-Bold.ttf", "weight": "bold" }
+      ]
+    },
+    "heading": {
+      "family": "Brand Serif",
+      "faces": [{ "file": "fonts/DejaVuSerif-Bold.ttf", "weight": "bold" }]
+    },
+    "code": {
+      "family": "Brand Mono",
+      "faces": [{ "file": "fonts/DejaVuSansMono.ttf" }]
+    }
+  },
+  "colors": {
+    "background": "#fbf8f1",
+    "text": "#1d2a3a",
+    "muted": "#5b6b7c",
+    "headerBackground": "#1d3a5f",
+    "headerText": "#fbf8f1",
+    "rule": "#e3dccb",
+    "strongRule": "#c8892b",
+    "stripe": "#f4efe3"
+  },
+  "table": {
+    "fontSize": 15,
+    "headerFontSize": 14,
+    "uppercaseHeader": false,
+    "padding": 28,
+    "maxWidth": 1100
+  },
+  "watermark": {
+    "text": "example.com",
+    "position": "bottom-right"
+  },
+  "promptStyle": "Clean editorial photography, natural light, muted colors, no text in the image."
+}

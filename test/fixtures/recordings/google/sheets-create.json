@@ -1,0 +1,35 @@
+{
+  "recordedAt": "2026-11-25",
+  "note": "NOT a live response: built from Google’s documentation for spreadsheets.create (https://developers.google.com/workspace/sheets/api/reference/rest/v4/spreadsheets/create, read 2026-11-25), because no Google sign-in was available. Values are placeholders.",
+  "request": {
+    "method": "POST",
+    "url": "https://sheets.googleapis.com/v4/spreadsheets"
+  },
+  "response": {
+    "status": 200,
+    "contentType": "application/json",
+    "body": {
+      "spreadsheetId": "1SampleSheetIdForDraftsmanTests",
+      "properties": {
+        "title": "Reservoir storage by region",
+        "locale": "en_US"
+      },
+      "sheets": [
+        {
+          "properties": {
+            "sheetId": 0,
+            "title": "Data",
+            "index": 0,
+            "sheetType": "GRID",
+            "gridProperties": {
+              "rowCount": 1000,
+              "columnCount": 26,
+              "frozenRowCount": 1
+            }
+          }
+        }
+      ],
+      "spreadsheetUrl": "https://docs.google.com/spreadsheets/d/1SampleSheetIdForDraftsmanTests/edit"
+    }
+  }
+}

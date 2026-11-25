@@ -1,0 +1,19 @@
+{
+  "recordedAt": "2026-11-25",
+  "note": "NOT a live response: built from Google’s documentation for permissions.create (https://developers.google.com/workspace/drive/api/reference/rest/v3/permissions/create, read 2026-11-25), because no Google sign-in was available. Values are placeholders.",
+  "request": {
+    "method": "POST",
+    "url": "https://www.googleapis.com/drive/v3/files/1SampleSheetIdForDraftsmanTests/permissions"
+  },
+  "response": {
+    "status": 200,
+    "contentType": "application/json",
+    "body": {
+      "kind": "drive#permission",
+      "id": "anyoneWithLink",
+      "type": "anyone",
+      "role": "reader",
+      "allowFileDiscovery": false
+    }
+  }
+}

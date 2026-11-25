@@ -4,8 +4,9 @@
 import { USER_AGENT } from './version.js';
 
 export interface HttpRequest {
-  method: 'GET' | 'POST';
+  method: 'GET' | 'POST' | 'PUT';
   headers: Record<string, string>;
+  body?: string;
 }
 
 export interface HttpResponse {
@@ -23,6 +24,7 @@ export const liveHttp: Http = async (url, request) => {
   const res = await fetch(url, {
     method: request.method,
     headers: { 'User-Agent': USER_AGENT, ...request.headers },
+    ...(request.body !== undefined ? { body: request.body } : {}),
     redirect: 'follow',
     signal: AbortSignal.timeout(30_000),
   });

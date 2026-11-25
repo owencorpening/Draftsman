@@ -1,0 +1,34 @@
+{
+  "$schema": "./style.schema.json",
+  "id": "default",
+  "name": "Neutral",
+  "fonts": {
+    "text": {
+      "family": "Draftsman Sans",
+      "faces": [
+        { "file": "fonts/DejaVuSans.ttf", "weight": "normal" },
+        { "file": "fonts/DejaVuSans-Bold.ttf", "weight": "bold" }
+      ]
+    },
+    "code": {
+      "family": "Draftsman Mono",
+      "faces": [{ "file": "fonts/DejaVuSansMono.ttf" }]
+    }
+  },
+  "colors": {
+    "background": "#ffffff",
+    "text": "#1f2933",
+    "muted": "#52606d",
+    "headerBackground": "#eef2f6",
+    "headerText": "#3e4c59",
+    "rule": "#d5dbe1",
+    "strongRule": "#3e4c59"
+  },
+  "table": {
+    "fontSize": 15,
+    "headerFontSize": 13,
+    "uppercaseHeader": true,
+    "padding": 24,
+    "maxWidth": 1100
+  }
+}

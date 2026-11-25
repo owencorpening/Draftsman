@@ -11,7 +11,30 @@ It is a local [MCP](https://modelcontextprotocol.io) server. It works with any A
 - `search_images` searches the image sources you've turned on.
 - `check_license` passes an image only when its license clearly allows both commercial use and changes.
 - `place_image` fills an image spot with an image that passed: it saves the image beside the article, writes the credit and alt text, and keeps a provenance file recording where the image came from and under what license.
+- `find_tables` lists the markdown tables in an article.
+- `render_table` turns a table into a styled image with a numbered caption. If you're signed in to Google, the data also goes into a new Google Sheet that anyone with the link can view, and the image links to it. Without Google you get the image alone.
+- `renumber_figures` puts figure captions back in order after you add, move or delete one, and updates "Figure 3"-style references to match.
 - A renderer that turns an HTML template into a PNG with your installed Chrome or Edge.
+
+## Styles
+
+Every image Draftsman draws uses one style file: colors, fonts and an optional watermark. Two ship in [styles/](styles/): `default` (neutral) and `sample-brand` (an example to copy). Pick one, or point to your own, in `.draftsman/config.json`:
+
+```json
+{ "style": "sample-brand" }
+```
+
+A style's fonts are files beside it, embedded when rendering, so a figure looks the same on any computer. The format is [styles/style.schema.json](styles/style.schema.json). The shipped fonts are DejaVu, whose license is in [styles/fonts/](styles/fonts/).
+
+## Google Sheets for tables
+
+To link table images to sheets, sign in once from a terminal:
+
+```sh
+DRAFTSMAN_GOOGLE_CLIENT_ID=<your OAuth client ID> npx draftsman google-sign-in
+```
+
+It opens Google's consent page in your browser and asks only for permission to manage the files Draftsman creates (`drive.file`), nothing else in your Drive. The sign-in is kept in your system keychain. On Ubuntu that needs `secret-tool` (`sudo apt install libsecret-tools`). You can also set `DRAFTSMAN_GOOGLE_REFRESH_TOKEN` yourself. The client ID can also go in the config as `"google": { "clientId": "…" }`; it isn't secret.
 
 ## Image sources
 

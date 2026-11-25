@@ -13,7 +13,8 @@
   },
   "files": [
     "dist",
-    "sources"
+    "sources",
+    "styles"
   ],
   "scripts": {
     "build": "tsc -p tsconfig.build.json",
