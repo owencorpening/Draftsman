@@ -246,7 +246,7 @@ Tests: `test/images.test.ts`
 - Image editing, or hosting beyond pushing to the user's own repo.
 - Posting to Substack, LinkedIn or anywhere else. It prepares files; the user publishes.
 - A chat window of Draftsman's own.
-- Formats other than markdown.
+- Formats other than markdown. Google Docs and Word are planned for version 2. The same tools work on a Google Doc, driven by the user's AI app, with Google's Docs MCP server or the Docs API making the edits and Draftsman's images uploaded to the user's Drive. Word (.docx) files are edited directly on the user's computer. No add-ins and no hosted server.
 
 ## Milestones
 
