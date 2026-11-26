@@ -95,12 +95,12 @@ Draftsman works on files on your computer, so it needs an AI app that runs local
 - **Criteria files:** the rules for choosing pull quotes and judging lists, kept as editable text the user can replace with their own. Samples ship with it.
 - **Renderer:** HTML templates turned into PNGs by a local headless browser. It uses an installed Chrome or Edge when there is one, and otherwise downloads one only after asking.
 - **Styles:** one style file sets colors, fonts and an optional watermark for every image it renders, plus the wording style for generation prompts. Neutral by default, with a sample brand style and room for the user's own.
-- **Packaging:** a VS Code agent plugin (skills plus the MCP server) on the Marketplace and Open VSX. The same server and skills also install in Claude Code and other MCP clients.
+- **Packaging:** the server is an npm package. The repo is an agent plugin (skills plus the MCP server), installed from the repo in VS Code and Claude Code; VS Code agent plugins are their own format, not extensions, and aren't listed on the Marketplace. The same server and skills also install in other MCP clients. The one editor command ships as a small VS Code extension on the Marketplace and Open VSX.
 - **One editor command without AI:** the mark-a-spot keystroke, because opening a chat to mark a spot would break the flow of writing.
 - **Picking:** an image grid through MCP Apps where the host shows one (experimental in VS Code). Otherwise a plain list in the chat with links. Forms through MCP elicitation where the host supports it.
 - **Image sources:** generic source definitions in JSON (search URL, auth, field map, license map and rules such as download or hotlink, credit format, cache time and the URL to call when a photo is picked). Pixabay is the default source. Openverse, Wikimedia Commons and a local folder are ready-made presets, off until the user turns them on. Pexels is a preset only for people who already have a Pexels key, because Pexels paused new API keys in November 2026 with no date to resume. Users add their own keys, kept in the OS keychain or an environment variable and never shipped.
 - **Image generators:** the same generic approach, starting with OpenAI-style image endpoints, always on the user's own key.
-- **Table data:** each table image links to a new Google Sheet made in the user's own Google account, viewable by anyone with the link. It asks only for Google's narrowest Drive permission, `drive.file`, which covers files the app creates. Google rates it non-sensitive, so the full verification for sensitive scopes doesn't apply, but `drive.file` still needs Google's basic (brand) verification for the consent screen to show Draftsman's name: a home page on a domain the author owns, a privacy policy, and the consent screen set up to match. That verification blocks the first release (see Milestones). A test still has to confirm that this permission also lets it share the new sheet. People who don't sign in to Google get the styled image alone, with no link.
+- **Table data:** each table image links to a new Google Sheet made in the user's own Google account, viewable by anyone with the link. It asks only for Google's narrowest Drive permission, `drive.file`, which covers files the app creates. Google rates it non-sensitive, so the full verification for sensitive scopes doesn't apply, but `drive.file` still needs Google's basic (brand) verification for the consent screen to show Draftsman's name: a home page on a domain the author owns, a privacy policy, and the consent screen set up to match. That verification blocks the first release (see Milestones). A live run on Nov 25 confirmed this permission also lets it share the new sheet. People who don't sign in to Google get the styled image alone, with no link.
 - **Where files go:** a folder in the writer's project by default. An optional destination pushes images to a git repo the user owns and uses its public file links, for platforms that take image links.
 
 ### Tools the server offers
@@ -114,6 +114,7 @@ Draftsman works on files on your computer, so it needs an AI app that runs local
 | `find_tables`, `render_table` | List tables, and turn one into a clickable styled image with a caption, linked to a new Google Sheet of its data |
 | `render_pullquote` | Turn a quote into a styled image placed by its source, refusing any text not found word for word in the article |
 | `find_blockquotes` | List blockquotes so they can be styled the same way |
+| `get_criteria` | Return the user's criteria for a job (pull quotes, lists), or the shipped sample |
 | `renumber_figures` | Put every figure caption in order |
 | `find_lists`, `apply_change` | List bullet lists with their context, and apply an accepted change as one edit the user can undo |
 | `build_carousel` | Make the slide deck and PDF from the summary block and the article's images |
@@ -274,6 +275,56 @@ Figure numbering
 - `render_table` numbers its new caption the same way.
 
 Tests: `test/figures.test.ts`
+
+### Pull quotes and blockquotes: `get_criteria`, `render_pullquote` and `find_blockquotes`
+
+Criteria
+
+- `get_criteria` returns the criteria text for a job (`pullquotes` now, `lists` later) and says where it came from. The user's own file wins: `.draftsman/criteria/<job>.md` in the project, or a path named in the config. Otherwise the shipped sample in `criteria/` is used.
+- The shipped pull-quote sample is plain markdown the user can copy and edit. Draftsman doesn't interpret it; the AI reads it and judges.
+
+Tests: `test/criteria.test.ts`
+
+Rendering a pull quote
+
+- `render_pullquote` takes the article, the quote, and optionally its line. It refuses any quote that isn't word for word in one paragraph of the article. Differences in whitespace, inline markdown (bold, italic, code, link markup) and typographic quote marks, apostrophes and dashes are ignored. Nothing else is: a changed, added or dropped word or punctuation mark is refused, and so is an ellipsis standing in for cut text. The refusal says where the quote stops matching.
+- A test feeds altered quotes (a changed word, a dropped word, changed punctuation, an ellipsis, two paragraphs joined) and expects a refusal for each.
+- When the quote appears more than once and no line is given, it refuses and lists the lines. A quote longer than the style's limit is refused.
+- The image is a PNG in the active style, which gains a `pullquote` section (font, size, width, quote mark, rule color). It matches reference images for both shipped styles.
+- The image is placed right after the paragraph the quote comes from. Its alt text is the quote, exactly. It gets no figure number. It goes in the `images` folder with a provenance file holding the quote, its source line, the style and the file's hash. If a step fails, the article is left unchanged.
+- Rendering a quote that's already placed as a pull quote is refused.
+
+Tests: `test/pullquotes.test.ts`
+
+Blockquotes
+
+- `find_blockquotes` lists every `>` blockquote with its lines and text, and an attribution line ("— Name") when there is one. Blockquotes inside code are ignored. GitHub alerts (`> [!NOTE]` and the like) are listed as alerts and can't be rendered.
+- `render_pullquote` given a blockquote's line replaces that blockquote with its image, styled the same as a pull quote, with the attribution kept below the quote in the image and the full text as alt text.
+
+Tests: `test/blockquotes.test.ts`
+
+### Skills
+
+- `skills/` holds one skill per job built so far: `images`, `tables` and `pull-quotes`. Lists, carousel and review get theirs in their milestones.
+- Each is a `skills/<name>/SKILL.md` in the open Agent Skills format: `name` matches the folder, lowercase letters, digits and hyphens, at most 64 characters; `description` at most 1024 characters. A test checks every skill.
+- Every tool a skill names exists on the server, and a test cross-checks the two lists, so a renamed tool can't leave a skill pointing at nothing.
+- Each skill says when to ask the user before acting. The images skill never places an image that hasn't passed `check_license`; the pull-quotes skill calls `get_criteria` first and offers candidates for the user to pick, never placing one unasked.
+
+Tests: `test/skills.test.ts`
+
+### Packaging
+
+- The server is an npm package, `draftsman`, runnable as `npx draftsman`. The npm name is checked before the first publish (it was unpublished in 2020). `npm pack` contents are tested: the package holds `dist`, `sources`, `styles`, `criteria` and `skills`, and no tests, fixtures or recordings. CI installs the packed tarball into an empty folder and lists the tools over stdio.
+- The repo is also an agent plugin. `plugin.json` (Agent Plugins 1.0) for VS Code and `.claude-plugin/plugin.json` for Claude Code name the plugin; `skills/` holds the skills; `mcp.json` and `.mcp.json` start the server with `npx -y draftsman@<version>`. A test checks both manifests' required fields, and that every version number matches `package.json`.
+- The mark-a-spot keystroke is a small VS Code extension, published to the Marketplace and Open VSX. It needs no AI and no server. Its command asks for a short description and inserts `![description](draftsman:pending)` at the cursor. A test runs the command in a VS Code test instance.
+
+Tests: `test/package.test.ts`, `extension/test/`
+
+### Working in VS Code and Claude Code
+
+- `demo/article.md` is the demo article: three image spots, two tables and a summary block.
+- The plugin installs from the repo in VS Code (Copilot agent mode) and in Claude Code, using only the README.
+- In each, a recorded run takes the demo article through images, tables and pull quotes. The runs are saved in `demo/runs/` with keys and tokens removed. They are redone before each release.
 
 ## Not in version 1
 
