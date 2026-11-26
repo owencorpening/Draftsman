@@ -1,0 +1,53 @@
+{
+  "name": "draftsman-mark",
+  "displayName": "Draftsman: Mark Image Spot",
+  "description": "One keystroke drops an image placeholder into a markdown draft, so writing never stops for a picture hunt. Draftsman fills it later.",
+  "version": "0.0.0",
+  "publisher": "owencorpening",
+  "license": "MIT",
+  "private": true,
+  "repository": "https://github.com/owencorpening/Draftsman",
+  "engines": {
+    "vscode": "^1.140.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "main": "./out/extension.js",
+  "activationEvents": [],
+  "contributes": {
+    "commands": [
+      {
+        "command": "draftsman.markImageSpot",
+        "title": "Mark Image Spot",
+        "category": "Draftsman"
+      }
+    ],
+    "keybindings": [
+      {
+        "command": "draftsman.markImageSpot",
+        "key": "ctrl+alt+shift+i",
+        "mac": "cmd+alt+shift+i",
+        "when": "editorTextFocus && editorLangId == markdown && !editorReadonly"
+      }
+    ],
+    "menus": {
+      "commandPalette": [
+        {
+          "command": "draftsman.markImageSpot",
+          "when": "editorLangId == markdown"
+        }
+      ]
+    }
+  },
+  "scripts": {
+    "build": "tsc -p .",
+    "test": "npm run build && node ./out/test/run.js"
+  },
+  "devDependencies": {
+    "@types/node": "24.19.4",
+    "@types/vscode": "1.140.0",
+    "@vscode/test-electron": "3.1.0",
+    "typescript": "6.0.3"
+  }
+}

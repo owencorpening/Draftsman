@@ -94,6 +94,7 @@ Draftsman is an agent plugin: the skills in [skills/](skills/) plus the MCP serv
 
 - **VS Code** (Copilot agent mode): run **Chat: Install Plugin from Source** from the Command Palette and enter `https://github.com/owencorpening/Draftsman`.
 - **Claude Code:** run `/plugin marketplace add owencorpening/Draftsman`, then `/plugin install draftsman@draftsman`.
+- **The mark-a-spot keystroke** is a small VS Code extension in [extension/](extension/): Ctrl+Alt+Shift+I in a markdown file drops a placeholder without opening a chat.
 - **Any other MCP app:** add a local stdio server that runs `npx -y draftsman`. The skills are plain markdown you can give the app as instructions.
 
 You need Node 22.12 or later, and Chrome or Edge for rendering.

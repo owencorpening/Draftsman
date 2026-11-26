@@ -38,6 +38,27 @@ jobs:
           path: test/output/
           if-no-files-found: ignore
 
+  extension:
+    name: VS Code extension
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: extension
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: extension/package-lock.json
+      - run: npm ci
+      # The VS Code the tests run in (see src/test/run.ts), cached between runs.
+      - uses: actions/cache@v6
+        with:
+          path: extension/.vscode-test
+          key: vscode-test-${{ runner.os }}-${{ hashFiles('extension/src/test/run.ts') }}
+      - run: xvfb-run -a npm test
+
   private-names:
     name: Private names check
     runs-on: ubuntu-latest

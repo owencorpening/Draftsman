@@ -4,3 +4,6 @@ dist/
 .cache/
 # Written by the render test on a mismatch, for a look at what changed.
 test/output/
+# The extension's build, and the VS Code its tests download.
+extension/out/
+extension/.vscode-test/
