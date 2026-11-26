@@ -48,7 +48,25 @@ describe('Google sign-in', () => {
     });
   });
 
-  it('completes: the code comes back to 127.0.0.1, is exchanged with the PKCE verifier and no secret, and the refresh token is stored', async () => {
+  it('sends the client secret on the code exchange when there is one', async () => {
+    const replay = replayHttp([], [exchange()]);
+    const b = browser((redirect, state) => new URL(`/?state=${state}&code=test-code`, redirect));
+    await signIn({ http: replay.http, clientId: CLIENT, clientSecret: 'test-client-secret', open: b.open, store: async () => undefined });
+    expect(Object.fromEntries(new URLSearchParams(replay.requests[0]!.request.body))).toMatchObject({ client_secret: 'test-client-secret', code_verifier: expect.any(String) });
+  });
+
+  it('says where to put the client secret when Google asks for one', async () => {
+    const missing: Recording = {
+      ...loadRecording('google', 'token-refresh'),
+      response: { status: 400, contentType: 'application/json', body: { error: 'invalid_request', error_description: 'client_secret is missing.' } },
+    };
+    const b = browser((redirect, state) => new URL(`/?state=${state}&code=c`, redirect));
+    await expect(signIn({ http: replayHttp([], [missing]).http, clientId: CLIENT, open: b.open, store: async () => undefined })).rejects.toThrow(
+      /DRAFTSMAN_GOOGLE_CLIENT_SECRET.*account google-client-secret/,
+    );
+  });
+
+  it('completes: the code comes back to 127.0.0.1, is exchanged with the PKCE verifier, and the refresh token is stored', async () => {
     const replay = replayHttp([], [exchange()]);
     const stored: string[] = [];
     const b = browser((redirect, state) => new URL(`/?state=${state}&code=test-code`, redirect));
@@ -115,6 +133,19 @@ describe('Google availability', () => {
     now = 3599_000; // within a minute of expiry
     await google.createSheet('c', [['x']]);
     expect(replay.requests.filter((r) => r.url.includes('oauth2')).length).toBe(2);
+  });
+
+  it('sends the client secret from the keys on every refresh, and treats it as a secret to scrub', async () => {
+    const replay = replayHttp();
+    const google = new Google({
+      http: replay.http,
+      keys: fakeKeys({ DRAFTSMAN_GOOGLE_REFRESH_TOKEN: 'r', DRAFTSMAN_GOOGLE_CLIENT_SECRET: 'test-client-secret' }),
+      clientId: CLIENT,
+    });
+    await google.createSheet('a', [['x']]);
+    const refresh = replay.requests.find((r) => r.url.includes('oauth2'))!;
+    expect(Object.fromEntries(new URLSearchParams(refresh.request.body))).toMatchObject({ client_secret: 'test-client-secret', grant_type: 'refresh_token' });
+    expect(google.secrets).toContain('test-client-secret');
   });
 
   it('reports Google’s own error message', async () => {

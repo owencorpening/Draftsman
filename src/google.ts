@@ -4,13 +4,15 @@
 // Sign-in uses Google's flow for desktop apps: the browser opens Google's
 // consent page, Google sends the user back to a one-time address on this
 // computer (http://127.0.0.1:<port>), and the code it carries is exchanged for
-// tokens. PKCE protects the exchange, so no client secret is needed; Google
-// treats desktop apps as public clients that can't keep one. The only
-// permission asked for is drive.file: files this app creates, nothing else.
+// tokens. PKCE protects the exchange. Google still requires the client secret
+// on the token endpoint for Desktop clients, though it calls them public
+// clients that can't keep one. The only permission asked for is drive.file:
+// files this app creates, nothing else.
 //
 // The refresh token is kept in the OS keychain (service "draftsman", account
-// "google") or DRAFTSMAN_GOOGLE_REFRESH_TOKEN. It is never written to a file,
-// logged, or returned in a tool result.
+// "google") or DRAFTSMAN_GOOGLE_REFRESH_TOKEN; the client secret in the
+// keychain (account "google-client-secret") or DRAFTSMAN_GOOGLE_CLIENT_SECRET.
+// Neither is ever written to a file, logged, or returned in a tool result.
 
 import { execFile } from 'node:child_process';
 import { createHash, randomBytes } from 'node:crypto';
@@ -33,7 +35,17 @@ export function clientId(env: NodeJS.ProcessEnv, configured: string | undefined)
   return env['DRAFTSMAN_GOOGLE_CLIENT_ID']?.trim() || configured;
 }
 
-const base64url = (b: Buffer) => b.toString('base64').replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+/** Where the client secret is looked up: the environment, then the keychain. */
+export const CLIENT_SECRET_KEY = { id: 'google-client-secret', env: 'DRAFTSMAN_GOOGLE_CLIENT_SECRET' };
+
+const MISSING_SECRET =
+  'Google needs this OAuth client’s secret. Set DRAFTSMAN_GOOGLE_CLIENT_SECRET, or store it in the keychain ' +
+  '(Linux: secret-tool store --label="Draftsman Google client secret" service draftsman account google-client-secret).';
+
+/** The token request's fields, with the client secret when there is one. */
+const withSecret = (values: Record<string, string>, secret: string | undefined) => (secret ? { ...values, client_secret: secret } : values);
+
+const base64url =(b: Buffer) => b.toString('base64').replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
 
 export function pkce(): { verifier: string; challenge: string } {
   const verifier = base64url(randomBytes(48));
@@ -66,6 +78,9 @@ async function tokenRequest(http: Http, values: Record<string, string>): Promise
   const res = await http(TOKEN_URL, { method: 'POST', headers: f.headers, body: f.body });
   const json = JSON.parse(res.body.toString('utf8') || '{}') as Record<string, unknown>;
   if (res.status !== 200) {
+    if (!values['client_secret'] && /client_secret is missing/i.test(String(json['error_description'] ?? ''))) {
+      throw new GoogleError(MISSING_SECRET);
+    }
     if (json['error'] === 'invalid_grant') {
       throw new GoogleError('Google sign-in has expired or was revoked. Run `draftsman google-sign-in` again.');
     }
@@ -119,6 +134,8 @@ export async function waitForCode(state: string, timeoutMs = 5 * 60_000): Promis
 export interface SignInDeps {
   http: Http;
   clientId: string;
+  /** The client secret, when Google requires one. */
+  clientSecret?: string | undefined;
   /** Opens the consent page; by default the system browser. */
   open?: (url: string) => void;
   /** Saves the refresh token; by default the OS keychain. */
@@ -136,13 +153,10 @@ export async function signIn(deps: SignInDeps): Promise<void> {
   (deps.open ?? openBrowser)(url);
   try {
     const code = await wait.code;
-    const tokens = await tokenRequest(deps.http, {
-      client_id: deps.clientId,
-      code,
-      code_verifier: verifier,
-      grant_type: 'authorization_code',
-      redirect_uri: wait.redirectUri,
-    });
+    const tokens = await tokenRequest(
+      deps.http,
+      withSecret({ client_id: deps.clientId, code, code_verifier: verifier, grant_type: 'authorization_code', redirect_uri: wait.redirectUri }, deps.clientSecret),
+    );
     const refresh = tokens['refresh_token'];
     if (typeof refresh !== 'string' || !refresh) throw new GoogleError('Google did not return a refresh token.');
     const granted = String(tokens['scope'] ?? '');
@@ -221,7 +235,9 @@ export class Google {
     if (this.access && this.access.expires > now + 60_000) return this.access.token;
     const refresh = await this.refreshToken();
     if (!refresh || !this.o.clientId) throw new GoogleError((await this.unavailable()) ?? 'Google is not available.');
-    const json = await tokenRequest(this.o.http, { client_id: this.o.clientId, refresh_token: refresh, grant_type: 'refresh_token' });
+    const secret = await this.o.keys(CLIENT_SECRET_KEY);
+    if (secret) this.secrets.add(secret.key);
+    const json = await tokenRequest(this.o.http, withSecret({ client_id: this.o.clientId, refresh_token: refresh, grant_type: 'refresh_token' }, secret?.key));
     const token = String(json['access_token'] ?? '');
     if (!token) throw new GoogleError('Google did not return an access token.');
     this.secrets.add(token);

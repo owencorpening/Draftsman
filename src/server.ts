@@ -13,7 +13,7 @@ import { defaultCacheDir } from './cache.js';
 import { findSlotsInFile, markSlotInFile } from './files.js';
 import { liveHttp, type Http } from './http.js';
 import { ImageError, ImageService } from './images.js';
-import { clientId, Google, keychainStore, runWithInput, signIn } from './google.js';
+import { CLIENT_SECRET_KEY, clientId, Google,keychainStore, runWithInput, signIn } from './google.js';
 import { keyLookup, scrubKeys, type KeyLookup } from './keys.js';
 import type { RenderOptions } from './render/index.js';
 import { SlotError } from './slots.js';
@@ -269,7 +269,8 @@ async function googleSignInCommand(): Promise<void> {
     console.error('draftsman: no Google OAuth client ID. Set DRAFTSMAN_GOOGLE_CLIENT_ID, or google.clientId in .draftsman/config.json.');
     process.exit(1);
   }
-  await signIn({ http: liveHttp, clientId: id, store: keychainStore(runWithInput), say: (m) => console.error(m) });
+  const secret = await keyLookup(process.env)(CLIENT_SECRET_KEY);
+  await signIn({ http: liveHttp, clientId: id, clientSecret: secret?.key, store: keychainStore(runWithInput), say: (m) => console.error(m) });
   console.error('Signed in to Google. Tables will now link to new sheets in your Drive.');
 }
 

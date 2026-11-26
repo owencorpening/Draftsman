@@ -36,6 +36,8 @@ DRAFTSMAN_GOOGLE_CLIENT_ID=<your OAuth client ID> npx draftsman google-sign-in
 
 It opens Google's consent page in your browser and asks only for permission to manage the files Draftsman creates (`drive.file`), nothing else in your Drive. The sign-in is kept in your system keychain. On Ubuntu that needs `secret-tool` (`sudo apt install libsecret-tools`). You can also set `DRAFTSMAN_GOOGLE_REFRESH_TOKEN` yourself. The client ID can also go in the config as `"google": { "clientId": "…" }`; it isn't secret.
 
+Google also requires the OAuth client's secret, even with PKCE. Set `DRAFTSMAN_GOOGLE_CLIENT_SECRET`, or store it in the keychain (`secret-tool store --label="Draftsman Google client secret" service draftsman account google-client-secret`). It never goes in the config or any file.
+
 ## Image sources
 
 | Source | On by default | Needs a key |
