@@ -88,6 +88,13 @@ export const Config = z.strictObject({
   google: z.strictObject({ clientId: z.string().min(1).optional() }).default({}),
   /** Your own criteria files by job, relative to the project folder. */
   criteria: z.strictObject({ pullquotes: z.string().min(1).optional(), lists: z.string().min(1).optional() }).default({}),
+  /** The carousel: your own Marp theme file, and other names for the summary heading. */
+  carousel: z
+    .strictObject({
+      theme: z.string().min(1).optional(),
+      summaryHeadings: z.array(z.string().min(1)).optional(),
+    })
+    .default({}),
 });
 export type Config = z.infer<typeof Config>;
 

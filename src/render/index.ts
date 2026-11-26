@@ -97,9 +97,12 @@ const BROWSER_ARGS = [
   '--no-default-browser-check',
 ];
 
-/** Renders an HTML document to PNG bytes. */
-export async function renderHtml(html: string, options: RenderOptions = {}): Promise<Buffer> {
-  const { width = 1200, height = 800, scale = 2, selector = 'body', fonts = [], allowNetwork = false } = options;
+/**
+ * Opens the HTML in a headless browser with its fonts loaded and checked, and
+ * runs `use` on the page. Shared by the PNG and PDF renderers.
+ */
+async function withPage<T>(html: string, options: RenderOptions, use: (page: import('puppeteer-core').Page) => Promise<T>): Promise<T> {
+  const { width = 1200, height = 800, scale = 2, fonts = [], allowNetwork = false } = options;
 
   const args = [...BROWSER_ARGS];
   // Never the default; see RenderOptions.noSandbox.
@@ -142,12 +145,41 @@ export async function renderHtml(html: string, options: RenderOptions = {}): Pro
       );
     }, fonts.map((f) => f.family));
     if (missing.length) throw new Error(`font(s) did not load: ${missing.join(', ')}`);
+    return await use(page);
+  } finally {
+    await browser.close();
+  }
+}
 
+/** Renders an HTML document to PNG bytes. */
+export async function renderHtml(html: string, options: RenderOptions = {}): Promise<Buffer> {
+  const selector = options.selector ?? 'body';
+  return withPage(html, options, async (page) => {
     const element = await page.$(selector);
     if (!element) throw new Error(`nothing in the template matches "${selector}"`);
     const png = await element.screenshot({ type: 'png', omitBackground: false });
     return Buffer.from(png);
-  } finally {
-    await browser.close();
-  }
+  });
+}
+
+export interface PdfOptions extends RenderOptions {
+  /** Page size in CSS pixels. */
+  pageWidth: number;
+  pageHeight: number;
+  /** Elements that must each be exactly one page; checked before printing. */
+  pageSelector: string;
+}
+
+/** Renders an HTML document to PDF bytes, one page per `pageSelector` element, each checked to be the page size. */
+export async function renderPdf(html: string, options: PdfOptions): Promise<{ pdf: Buffer; pages: number }> {
+  const { pageWidth: w, pageHeight: h, pageSelector } = options;
+  const css = `@page { size: ${w}px ${h}px; margin: 0; } html, body { margin: 0; padding: 0; } ${pageSelector} { break-after: page; }`;
+  return withPage(withHeadStyle(html, css), { ...options, width: w, height: h, scale: 1 }, async (page) => {
+    const sizes = await page.$$eval(pageSelector, (els) => els.map((e) => [Math.round(e.getBoundingClientRect().width), Math.round(e.getBoundingClientRect().height)]));
+    if (!sizes.length) throw new Error(`nothing in the document matches "${pageSelector}"`);
+    const wrong = sizes.findIndex(([sw, sh]) => sw !== w || sh !== h);
+    if (wrong >= 0) throw new Error(`page ${wrong + 1} is ${sizes[wrong]![0]} by ${sizes[wrong]![1]}, not ${w} by ${h}`);
+    const pdf = await page.pdf({ width: `${w}px`, height: `${h}px`, printBackground: true, preferCSSPageSize: true, margin: { top: 0, right: 0, bottom: 0, left: 0 } });
+    return { pdf: Buffer.from(pdf), pages: sizes.length };
+  });
 }

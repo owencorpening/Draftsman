@@ -11,6 +11,7 @@ import { createServer } from '../src/server.js';
 
 const TOOLS = [
   'apply_change',
+  'build_carousel',
   'check_license',
   'find_blockquotes',
   'find_lists',

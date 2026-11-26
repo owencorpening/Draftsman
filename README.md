@@ -19,7 +19,8 @@ It is a local [MCP](https://modelcontextprotocol.io) server. It works with any A
 - `find_blockquotes` lists the blockquotes in an article.
 - `find_lists` lists the bullet and numbered lists, so the AI can spot ones that are really a table, an argument or a paragraph, judged by your criteria.
 - `apply_change` makes one accepted change, refusing if the article changed since the AI read it. `undo_change` reverses the last one, and can go back further one at a time. The history is kept in Draftsman's cache folder, not beside your article.
-- A renderer that turns an HTML template into a PNG with your installed Chrome or Edge.
+- `build_carousel` makes a portrait slide deck (Marp markdown) and a PDF, 1080 by 1350 a page as LinkedIn carousels use, from the article's summary block and its images. Each slide with a photo carries the photo's credit.
+- A renderer that turns an HTML template into a PNG or PDF with your installed Chrome or Edge.
 
 ## Styles
 
@@ -36,6 +37,18 @@ A style's fonts are files beside it, embedded when rendering, so a figure looks 
 What makes a good pull quote, and when a list should be something else, is up to you. Draftsman ships samples in [criteria/](criteria/): `pullquotes.md` and `lists.md`. Copy one to `.draftsman/criteria/` in your project and edit it, or name another file in the config, like `"criteria": { "lists": "path/to/file.md" }`. The AI reads it through `get_criteria` before it suggests quotes.
 
 A style's `pullquote` section sets the quote's font (`text` or `heading`), size, image width, the large quote mark, the accent color and the longest quote accepted. Every field has a default.
+
+## Carousels
+
+The summary block is the section under a heading named "Executive Summary", "Summary" or "Key takeaways", at any level, also inside a blockquote. Its bullets become slides; if it has none, its paragraphs that start with a bold label ("**The Problem:** …") do; otherwise its one paragraph does. The deck and PDF go beside the article as `<article>-carousel.md` and `<article>-carousel.pdf`. Edit the deck and build again to remake the PDF from your edits.
+
+The slides use your Draftsman style. To use your own Marp theme instead, or other summary headings:
+
+```json
+{ "carousel": { "theme": "themes/my-theme.css", "summaryHeadings": ["The argument in one paragraph"] } }
+```
+
+Your theme needs a `/* @theme name */` comment and must make slides 1080 by 1350 (for example with `/* @size 1080x1350 1080px 1350px */`).
 
 ## Google Sheets for tables
 

@@ -39,7 +39,7 @@ async function serverTools(): Promise<string[]> {
 
 describe('skills', () => {
   it('ship one per job built so far', () => {
-    expect(skills.map((s) => s.dir).sort()).toEqual(['images', 'lists', 'pull-quotes', 'tables']);
+    expect(skills.map((s) => s.dir).sort()).toEqual(['carousel', 'images', 'lists', 'pull-quotes', 'tables']);
   });
 
   for (const s of skills) {
@@ -53,7 +53,7 @@ describe('skills', () => {
     });
 
     it(`${s.dir}: says to wait for the user before acting`, () => {
-      expect(s.body).toMatch(/wait for the user|user agrees|let them change/i);
+      expect(s.body).toMatch(/wait for the user|user agrees|let them change|wait for the user to confirm/i);
     });
   }
 

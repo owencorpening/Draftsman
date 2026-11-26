@@ -12,6 +12,7 @@ import { serveStdio } from '@modelcontextprotocol/server/stdio';
 import * as z from 'zod';
 
 import { defaultCacheDir } from './cache.js';
+import { Carousel } from './carousel.js';
 import { Changes } from './changes.js';
 import { CRITERIA_JOBS, CriteriaError, getCriteria } from './criteria.js';
 import { findSlotsInFile, markSlotInFile } from './files.js';
@@ -107,6 +108,13 @@ export function createServer(options: ServerOptions = {}): McpServer {
     ...(options.now ? { now: options.now } : {}),
   });
   const changes = new Changes({ cwd, cacheDir: options.cacheDir ?? defaultCacheDir(env), ...(options.now ? { now: options.now } : {}) });
+  const carousel = new Carousel({
+    cwd,
+    style,
+    theme: config.carousel.theme,
+    summaryHeadings: config.carousel.summaryHeadings,
+    ...(options.renderOptions ? { renderOptions: options.renderOptions } : {}),
+  });
   const pullquotes = new PullQuotes({
     cwd,
     imagesFolder: config.imagesFolder,
@@ -378,6 +386,27 @@ export function createServer(options: ServerOptions = {}): McpServer {
       annotations: { readOnlyHint: false, destructiveHint: true, idempotentHint: false, openWorldHint: false },
     },
     ({ path }) => run(async () => ({ ...(await changes.undo({ path })) })),
+  );
+
+  server.registerTool(
+    'build_carousel',
+    {
+      title: 'Build the carousel',
+      description:
+        'Make a portrait slide deck (Marp markdown, <article>-carousel.md) and a PDF (<article>-carousel.pdf, 1080 by 1350 ' +
+        'pixels a page, the size LinkedIn carousels use) beside the article, from its summary block and its images: a ' +
+        'title slide, one slide per summary point, and a closing slide with the link when you give one. The summary is ' +
+        'the section under a heading like "Executive Summary", "Summary" or "Key takeaways". If the deck already exists, ' +
+        'the PDF is built from it as it stands (it may have been edited); pass fromArticle to rebuild the deck from the article.',
+      inputSchema: z.object({
+        path: z.string().describe('The article, a .md or .markdown file'),
+        link: z.string().optional().describe('The published article’s link, for the closing slide'),
+        fromArticle: z.boolean().optional().describe('Rebuild the deck from the article, replacing an existing one'),
+      }),
+      annotations: { readOnlyHint: false, destructiveHint: true, idempotentHint: true, openWorldHint: false },
+    },
+    ({ path, link, fromArticle }) =>
+      run(async () => ({ ...(await carousel.build({ path, ...(link ? { link } : {}), ...(fromArticle ? { fromArticle } : {}) })) })),
   );
 
   return server;
