@@ -283,6 +283,65 @@
       ],
       "additionalProperties": false
     },
+    "pullquote": {
+      "default": {
+        "font": "heading",
+        "fontSize": 30,
+        "width": 900,
+        "padding": 48,
+        "quoteMark": true,
+        "maxLength": 300
+      },
+      "type": "object",
+      "properties": {
+        "font": {
+          "default": "heading",
+          "description": "Which of the fonts the quote is set in",
+          "type": "string",
+          "enum": [
+            "text",
+            "heading"
+          ]
+        },
+        "fontSize": {
+          "default": 30,
+          "type": "number",
+          "minimum": 12,
+          "maximum": 80
+        },
+        "width": {
+          "default": 900,
+          "description": "Image width, in pixels",
+          "type": "number",
+          "minimum": 300,
+          "maximum": 2000
+        },
+        "padding": {
+          "default": 48,
+          "type": "number",
+          "minimum": 0,
+          "maximum": 120
+        },
+        "quoteMark": {
+          "default": true,
+          "description": "Draw a large opening quote mark",
+          "type": "boolean"
+        },
+        "ruleColor": {
+          "description": "The accent rule and quote mark; default colors.strongRule",
+          "type": "string",
+          "pattern": "^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})$"
+        },
+        "maxLength": {
+          "default": 300,
+          "description": "Longest quote accepted, in characters",
+          "type": "integer",
+          "minimum": 40,
+          "maximum": 2000
+        }
+      },
+      "additionalProperties": false
+    },
     "watermark": {
       "type": "object",
       "properties": {

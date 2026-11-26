@@ -10,11 +10,13 @@ import { serveStdio } from '@modelcontextprotocol/server/stdio';
 import * as z from 'zod';
 
 import { defaultCacheDir } from './cache.js';
+import { CRITERIA_JOBS, CriteriaError, getCriteria } from './criteria.js';
 import { findSlotsInFile, markSlotInFile } from './files.js';
 import { liveHttp, type Http } from './http.js';
 import { ImageError, ImageService } from './images.js';
-import { CLIENT_SECRET_KEY, clientId, Google,keychainStore, runWithInput, signIn } from './google.js';
+import { CLIENT_SECRET_KEY, clientId, Google, keychainStore, runWithInput, signIn } from './google.js';
 import { keyLookup, scrubKeys, type KeyLookup } from './keys.js';
+import { PullQuotes } from './pullquotes.js';
 import type { RenderOptions } from './render/index.js';
 import { SlotError } from './slots.js';
 import { DefinitionError, loadConfig, loadSources } from './sources/load.js';
@@ -45,7 +47,7 @@ async function run(body: () => Promise<Record<string, unknown>>, scrub: (s: stri
     const out = JSON.parse(scrub(JSON.stringify(await body()))) as Record<string, unknown>;
     return { content: [{ type: 'text', text: JSON.stringify(out, null, 2) }], structuredContent: out };
   } catch (e) {
-    if (e instanceof SlotError || e instanceof ImageError) return { content: [{ type: 'text', text: scrub(e.message) }], isError: true };
+    if (e instanceof SlotError || e instanceof ImageError || e instanceof CriteriaError) return { content: [{ type: 'text', text: scrub(e.message) }], isError: true };
     throw e;
   }
 }
@@ -98,6 +100,14 @@ export function createServer(options: ServerOptions = {}): McpServer {
     ...(options.render ? { render: options.render } : {}),
     ...(options.renderOptions ? { renderOptions: options.renderOptions } : {}),
     log: (m) => log(scrubKeys(m, google.secrets)),
+    ...(options.now ? { now: options.now } : {}),
+  });
+  const pullquotes = new PullQuotes({
+    cwd,
+    imagesFolder: config.imagesFolder,
+    style,
+    ...(options.render ? { render: options.render } : {}),
+    ...(options.renderOptions ? { renderOptions: options.renderOptions } : {}),
     ...(options.now ? { now: options.now } : {}),
   });
   const server = new McpServer({ name: 'draftsman', version: VERSION }, { capabilities: { tools: {} } });
@@ -256,6 +266,57 @@ export function createServer(options: ServerOptions = {}): McpServer {
         const { text: _text, ...r } = await tables.renumber(path);
         return { ...r };
       }, scrub),
+  );
+
+  server.registerTool(
+    'get_criteria',
+    {
+      title: 'Get the user’s criteria',
+      description:
+        'Return the user’s criteria for a job, as text for you to follow: what makes a good pull quote, and how many to ' +
+        'suggest. The user’s own file is used when there is one (.draftsman/criteria/<job>.md, or a path in the config); ' +
+        'otherwise the shipped sample. Read it before suggesting pull quotes.',
+      inputSchema: z.object({ job: z.enum(CRITERIA_JOBS).describe('Which criteria') }),
+      outputSchema: z.object({ job: z.string(), from: z.enum(['config', 'project', 'sample']), file: z.string(), text: z.string() }),
+      annotations: { readOnlyHint: true, openWorldHint: false },
+    },
+    ({ job }) => run(async () => ({ ...(await getCriteria(job, cwd, config)) })),
+  );
+
+  server.registerTool(
+    'find_blockquotes',
+    {
+      title: 'Find blockquotes',
+      description:
+        'List the blockquotes (lines starting with >) in an article: their lines, text, and attribution when the last ' +
+        'line is like "— Name". Any of them can be turned into a styled image with render_pullquote, given its line. ' +
+        'GitHub alerts (> [!NOTE] and the like) are listed with kind "alert" and stay as text. Blockquotes inside code are ignored.',
+      inputSchema: z.object({ path: z.string().describe('The article, a .md or .markdown file') }),
+      annotations: { readOnlyHint: true, openWorldHint: false },
+    },
+    ({ path }) => run(async () => ({ ...(await pullquotes.findBlockquotes(path)) })),
+  );
+
+  server.registerTool(
+    'render_pullquote',
+    {
+      title: 'Make a pull quote',
+      description:
+        'Turn a quote from the article into a styled image placed right after the paragraph it comes from. The quote ' +
+        'must be copied word for word from one paragraph: only whitespace, inline markdown and curly-versus-straight ' +
+        'quote marks and dashes may differ. Anything else is refused, including an ellipsis standing for cut words, ' +
+        'and the error says where it stops matching. Give the line when the same words appear twice. The alt text is ' +
+        'the quote. Only place quotes the user has chosen. To style an existing blockquote instead, leave out the quote ' +
+        'and give the blockquote’s line from find_blockquotes: the blockquote is replaced by its image.',
+      inputSchema: z.object({
+        path: z.string().describe('The article, a .md or .markdown file'),
+        quote: z.string().min(1).optional().describe('The exact words, copied from one paragraph; leave out to style a blockquote'),
+        line: z.number().int().min(1).optional().describe('A line of the source paragraph, or of the blockquote to style'),
+      }),
+      annotations: { readOnlyHint: false, destructiveHint: false, idempotentHint: false, openWorldHint: false },
+    },
+    ({ path, quote, line }) =>
+      run(async () => ({ ...(await pullquotes.render({ path, ...(quote !== undefined ? { quote } : {}), ...(line !== undefined ? { line } : {}) })) })),
   );
 
   return server;

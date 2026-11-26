@@ -86,6 +86,8 @@ export const Config = z.strictObject({
   style: z.string().min(1).default('default'),
   /** Google sign-in. The client ID isn't secret; DRAFTSMAN_GOOGLE_CLIENT_ID overrides it. */
   google: z.strictObject({ clientId: z.string().min(1).optional() }).default({}),
+  /** Your own criteria files by job, relative to the project folder. */
+  criteria: z.strictObject({ pullquotes: z.string().min(1).optional() }).default({}),
 });
 export type Config = z.infer<typeof Config>;
 

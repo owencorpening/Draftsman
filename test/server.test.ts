@@ -9,6 +9,20 @@ import { afterEach, describe, expect, it } from 'vitest';
 
 import { createServer } from '../src/server.js';
 
+const TOOLS = [
+  'check_license',
+  'find_blockquotes',
+  'find_slots',
+  'find_tables',
+  'get_criteria',
+  'mark_slot',
+  'place_image',
+  'render_pullquote',
+  'render_table',
+  'renumber_figures',
+  'search_images',
+];
+
 const clients: Client[] = [];
 afterEach(async () => {
   await Promise.all(clients.splice(0).map((c) => c.close()));
@@ -34,7 +48,7 @@ describe('MCP server', () => {
   it('offers its tools', async () => {
     const client = await connect();
     const { tools } = await client.listTools();
-    expect(tools.map((t) => t.name).sort()).toEqual(['check_license', 'find_slots', 'find_tables', 'mark_slot', 'place_image', 'render_table', 'renumber_figures', 'search_images']);
+    expect(tools.map((t) => t.name).sort()).toEqual(TOOLS);
     expect(tools.find((t) => t.name === 'find_slots')?.annotations?.readOnlyHint).toBe(true);
   });
 
@@ -81,13 +95,13 @@ describe('MCP server', () => {
     const client = await overStdio(new Client({ name: 'test', version: '0.0.0' }, { versionNegotiation: { mode: { pin: '2026-07-28' } } }));
     expect(client.getNegotiatedProtocolVersion()).toBe('2026-07-28');
     const { tools } = await client.listTools();
-    expect(tools.map((t) => t.name).sort()).toEqual(['check_license', 'find_slots', 'find_tables', 'mark_slot', 'place_image', 'render_table', 'renumber_figures', 'search_images']);
+    expect(tools.map((t) => t.name).sort()).toEqual(TOOLS);
   });
 
   it('still serves hosts that open with the older initialize handshake', async () => {
     const client = await overStdio(new Client({ name: 'test', version: '0.0.0' }));
     expect(client.getNegotiatedProtocolVersion()).toBe('2025-11-25');
     const { tools } = await client.listTools();
-    expect(tools).toHaveLength(8);
+    expect(tools).toHaveLength(TOOLS.length);
   });
 });

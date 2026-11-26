@@ -50,6 +50,17 @@ export const Style = z.strictObject({
     padding: z.number().min(0).max(60).describe('Padding around the table, in pixels'),
     maxWidth: z.number().min(200).max(4000),
   }),
+  pullquote: z
+    .strictObject({
+      font: z.enum(['text', 'heading']).default('heading').describe('Which of the fonts the quote is set in'),
+      fontSize: z.number().min(12).max(80).default(30),
+      width: z.number().min(300).max(2000).default(900).describe('Image width, in pixels'),
+      padding: z.number().min(0).max(120).default(48),
+      quoteMark: z.boolean().default(true).describe('Draw a large opening quote mark'),
+      ruleColor: Color.optional().describe('The accent rule and quote mark; default colors.strongRule'),
+      maxLength: z.int().min(40).max(2000).default(300).describe('Longest quote accepted, in characters'),
+    })
+    .default({ font: 'heading', fontSize: 30, width: 900, padding: 48, quoteMark: true, maxLength: 300 }),
   watermark: z
     .strictObject({
       text: z.string().min(1).max(80),

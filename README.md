@@ -14,6 +14,9 @@ It is a local [MCP](https://modelcontextprotocol.io) server. It works with any A
 - `find_tables` lists the markdown tables in an article.
 - `render_table` turns a table into a styled image with a numbered caption. If you're signed in to Google, the data also goes into a new Google Sheet that anyone with the link can view, and the image links to it. Without Google you get the image alone.
 - `renumber_figures` puts figure captions back in order after you add, move or delete one, and updates "Figure 3"-style references to match.
+- `get_criteria` gives the AI your rules for picking pull quotes.
+- `render_pullquote` turns a sentence from the article into a styled image placed after its paragraph. The quote must be word for word from one paragraph; anything else is refused. It can also turn an existing blockquote into the same kind of image.
+- `find_blockquotes` lists the blockquotes in an article.
 - A renderer that turns an HTML template into a PNG with your installed Chrome or Edge.
 
 ## Styles
@@ -25,6 +28,12 @@ Every image Draftsman draws uses one style file: colors, fonts and an optional w
 ```
 
 A style's fonts are files beside it, embedded when rendering, so a figure looks the same on any computer. The format is [styles/style.schema.json](styles/style.schema.json). The shipped fonts are DejaVu, whose license is in [styles/fonts/](styles/fonts/).
+
+## Criteria
+
+What makes a good pull quote is up to you. Draftsman ships a sample in [criteria/pullquotes.md](criteria/pullquotes.md); copy it to `.draftsman/criteria/pullquotes.md` in your project and edit it, or name another file in the config as `"criteria": { "pullquotes": "path/to/file.md" }`. The AI reads it through `get_criteria` before it suggests quotes.
+
+A style's `pullquote` section sets the quote's font (`text` or `heading`), size, image width, the large quote mark, the accent color and the longest quote accepted. Every field has a default.
 
 ## Google Sheets for tables
 

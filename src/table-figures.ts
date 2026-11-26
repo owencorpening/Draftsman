@@ -44,7 +44,7 @@ export interface RenderTableResult {
   renumbered: Pick<Renumbered, 'updated' | 'problems'>;
 }
 
-function slug(text: string): string {
+export function slug(text: string): string {
   return (
     text
       .toLowerCase()
