@@ -116,7 +116,7 @@ Draftsman works on files on your computer, so it needs an AI app that runs local
 | `find_blockquotes` | List blockquotes so they can be styled the same way |
 | `get_criteria` | Return the user's criteria for a job (pull quotes, lists), or the shipped sample |
 | `renumber_figures` | Put every figure caption in order |
-| `find_lists`, `apply_change` | List bullet lists with their context, and apply an accepted change as one edit the user can undo |
+| `find_lists`, `apply_change`, `undo_change` | List bullet lists with their context, apply an accepted change as one edit, and undo it |
 | `build_carousel` | Make the slide deck and PDF from the summary block and the article's images |
 | `review_article` | List every problem the jobs above would catch |
 | `list_setup` | Show which sources, generators, styles and destinations are set up and working |
@@ -325,6 +325,45 @@ Tests: `test/package.test.ts`, `extension/test/`
 - `demo/article.md` is the demo article: three image spots, two tables and a summary block.
 - The plugin installs from the repo in VS Code (Copilot agent mode) and in Claude Code, using only the README.
 - In each, a recorded run takes the demo article through images, tables and pull quotes. The runs are saved in `demo/runs/` with keys and tokens removed. They are redone before each release.
+
+### Lists: `find_lists`, `apply_change` and `undo_change`
+
+Finding lists
+
+- `find_lists` lists every bullet and numbered list outside code, with its lines, its items (nested items under their parent), and the paragraph before and after it, so the AI can judge it.
+- `get_criteria` gains a `lists` job, with a shipped sample in `criteria/lists.md`: when a list is really a table, an argument or a paragraph, and when it should stay a list.
+
+Tests: `test/lists.test.ts`
+
+Changing and undoing
+
+- `apply_change` replaces a range of lines with new markdown, given the exact text it replaces. If those lines no longer match, it refuses and changes nothing, so an edit is never made against a stale reading. Draftsman can't see whether the user accepted; the tool description and the lists skill say to call it only after they have.
+- Each change is one edit. `undo_change` reverses the last change on an article: it puts the original lines back where the new text still stands, even if other parts of the file were edited since. If the new text itself was edited, it refuses and says so. Undo goes back through earlier changes one at a time.
+- The undo history is kept outside the project, in Draftsman's cache folder, never in the article's folder.
+
+- A `lists` skill calls `get_criteria`, shows each proposed change as before and after, applies only the ones the user accepts, and tells them `undo_change` can reverse it.
+
+Tests: `test/changes.test.ts`, `test/skills.test.ts`
+
+### Carousel: `build_carousel`
+
+The summary block
+
+- The summary is the section under a heading named "Executive Summary", "Summary" or "Key takeaways" (any heading level, also inside a blockquote), up to the next heading, thematic break or the end of the blockquote. The config can name other headings.
+- Its points are its bullet items; or else its paragraphs that start with a bold label ("**The Problem:** …"), each with its label; or else its single paragraph, which becomes one point. No summary block is an error that says what to add.
+
+Building
+
+- `build_carousel` writes `<article>-carousel.md` and `<article>-carousel.pdf` beside the article. The deck is Marp markdown, so it can be edited and opened in the Marp tools the user already has.
+- Slides: a title slide with the article's title and first image; one slide per summary point, each paired in order with an article image while they last; and a closing slide with the article's link when one is given.
+- The PDF is rendered from the deck with Marp's own converter and the installed Chrome or Edge, so it looks like the deck. Every page is portrait, 1080 by 1350 pixels. A test checks the page size, and that there is a slide for every summary point.
+- The theme comes from the active style (colors, fonts, watermark). The config can name the user's own Marp theme file instead.
+- Running it again after editing the deck builds the PDF from the edited deck and leaves the deck alone; `fromArticle: true` rebuilds the deck from the article.
+- Rendered slides match reference images for both shipped styles.
+
+- A `carousel` skill checks the summary with the user before building, and says where the deck and PDF went.
+
+Tests: `test/carousel.test.ts`, `test/skills.test.ts`
 
 ## Not in version 1
 
