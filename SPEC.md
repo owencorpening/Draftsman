@@ -258,7 +258,8 @@ Tests: `test/render-table.test.ts`
 
 Google Sheets
 
-- Signing in to Google is a one-time command run in a terminal. It asks only for the `drive.file` permission, uses PKCE with a loopback address and no client secret, and keeps the refresh token in the OS keychain or an environment variable, never in a file Draftsman writes.
+- Signing in to Google is a one-time command run in a terminal. It asks only for the `drive.file` permission, uses PKCE with a loopback address, and keeps the refresh token in the OS keychain or an environment variable, never in a file Draftsman writes.
+- Google's token endpoint requires the client secret even for Desktop clients using PKCE (found in the first live sign-in, 2026-11-25). Draftsman reads it from `DRAFTSMAN_GOOGLE_CLIENT_SECRET` or the keychain (account `google-client-secret`), never from a file, and sends it on the code exchange and on every token refresh. It is scrubbed from logs and results like a token. When it's missing and Google asks for it, the error says where to put it. How the published package will carry it is decided before the first release.
 - With Google signed in, each rendered table gets a new Google Sheet in the user's Drive holding its data, shared so anyone with the link can view it, and the image links to the sheet.
 - Without Google, or when creating or sharing the sheet fails, the table still becomes an image, unlinked, and the result says why.
 - Tests use recorded responses for the Sheets, Drive and token endpoints. Tokens never appear in files, logs, provenance or tool results.
