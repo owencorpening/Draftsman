@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "draftsman": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "draftsman@0.0.0"
+      ]
+    }
+  }
+}

@@ -88,6 +88,16 @@ Draftsman can't tell an image's license from the file, so each image in your fol
 
 Openverse: image search through Openverse is made using the [Openverse API](https://openverse.org). Draftsman is not endorsed or certified by Openverse.
 
+## Install
+
+Draftsman is an agent plugin: the skills in [skills/](skills/) plus the MCP server, which runs with `npx draftsman`. It isn't on npm yet, so these steps work from the first release.
+
+- **VS Code** (Copilot agent mode): run **Chat: Install Plugin from Source** from the Command Palette and enter `https://github.com/owencorpening/Draftsman`.
+- **Claude Code:** run `/plugin marketplace add owencorpening/Draftsman`, then `/plugin install draftsman@draftsman`.
+- **Any other MCP app:** add a local stdio server that runs `npx -y draftsman`. The skills are plain markdown you can give the app as instructions.
+
+You need Node 22.12 or later, and Chrome or Edge for rendering.
+
 ## Try it
 
 You need Node 22.12 or later, and Chrome or Edge for rendering.

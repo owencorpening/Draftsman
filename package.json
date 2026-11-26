@@ -14,7 +14,9 @@
   "files": [
     "dist",
     "sources",
-    "styles"
+    "styles",
+    "criteria",
+    "skills"
   ],
   "scripts": {
     "build": "tsc -p tsconfig.build.json",
@@ -26,7 +28,8 @@
     "test-browser": "tsx scripts/install-test-browser.ts",
     "record": "tsx scripts/record.ts",
     "schema": "tsx scripts/write-schema.ts",
-    "check-names": "bash scripts/check-private-names.sh"
+    "check-names": "bash scripts/check-private-names.sh",
+    "prepack": "npm run build"
   },
   "dependencies": {
     "@modelcontextprotocol/server": "2.4.0",

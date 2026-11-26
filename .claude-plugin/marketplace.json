@@ -1,0 +1,14 @@
+{
+  "name": "draftsman",
+  "owner": {
+    "name": "owencorpening"
+  },
+  "plugins": [
+    {
+      "name": "draftsman",
+      "source": "./",
+      "description": "Takes a markdown draft to a publish-ready post: licensed and credited images, tables as figures linked to Google Sheets, pull quotes, figure numbers. A local MCP server and skills; calls no model.",
+      "version": "0.0.0"
+    }
+  ]
+}

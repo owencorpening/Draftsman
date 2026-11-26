@@ -25,7 +25,11 @@ jobs:
           path: .cache/test-browser
           key: test-browser-${{ runner.os }}-${{ hashFiles('test/test-browser.ts') }}
       - run: npm run test-browser
+      # DRAFTSMAN_TEST_PACK also installs the packed tarball into an empty
+      # folder and lists its tools, which needs the npm registry.
       - run: npm test
+        env:
+          DRAFTSMAN_TEST_PACK: '1'
       # On a render mismatch, keep what CI drew and the diff for a look.
       - if: failure()
         uses: actions/upload-artifact@v7
