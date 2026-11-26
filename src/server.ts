@@ -3,6 +3,8 @@
 // the AI host does the talking and judging, and these tools do the file work.
 
 import { realpathSync } from 'node:fs';
+import { readFile } from 'node:fs/promises';
+import nodePath from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import { McpServer } from '@modelcontextprotocol/server';
@@ -10,12 +12,14 @@ import { serveStdio } from '@modelcontextprotocol/server/stdio';
 import * as z from 'zod';
 
 import { defaultCacheDir } from './cache.js';
+import { Changes } from './changes.js';
 import { CRITERIA_JOBS, CriteriaError, getCriteria } from './criteria.js';
 import { findSlotsInFile, markSlotInFile } from './files.js';
 import { liveHttp, type Http } from './http.js';
 import { ImageError, ImageService } from './images.js';
 import { CLIENT_SECRET_KEY, clientId, Google, keychainStore, runWithInput, signIn } from './google.js';
 import { keyLookup, scrubKeys, type KeyLookup } from './keys.js';
+import { findLists } from './lists.js';
 import { PullQuotes } from './pullquotes.js';
 import type { RenderOptions } from './render/index.js';
 import { SlotError } from './slots.js';
@@ -102,6 +106,7 @@ export function createServer(options: ServerOptions = {}): McpServer {
     log: (m) => log(scrubKeys(m, google.secrets)),
     ...(options.now ? { now: options.now } : {}),
   });
+  const changes = new Changes({ cwd, cacheDir: options.cacheDir ?? defaultCacheDir(env), ...(options.now ? { now: options.now } : {}) });
   const pullquotes = new PullQuotes({
     cwd,
     imagesFolder: config.imagesFolder,
@@ -317,6 +322,62 @@ export function createServer(options: ServerOptions = {}): McpServer {
     },
     ({ path, quote, line }) =>
       run(async () => ({ ...(await pullquotes.render({ path, ...(quote !== undefined ? { quote } : {}), ...(line !== undefined ? { line } : {}) })) })),
+  );
+
+  server.registerTool(
+    'find_lists',
+    {
+      title: 'Find lists',
+      description:
+        'List the bullet and numbered lists in an article: their lines, items (nested items under their parent), the ' +
+        'list as written, and the paragraph before and after, so you can judge whether a list is really a table, an ' +
+        'argument or a paragraph. Read get_criteria with job "lists" first. Lists inside code and blockquotes are ignored.',
+      inputSchema: z.object({ path: z.string().describe('The article, a .md or .markdown file') }),
+      annotations: { readOnlyHint: true, openWorldHint: false },
+    },
+    ({ path }) =>
+      run(async () => {
+        const full = nodePath.resolve(cwd, path);
+        if (!/\.(md|markdown)$/i.test(full)) throw new ImageError(`${path} is not a markdown file (.md or .markdown).`);
+        const text = await readFile(full, 'utf8').catch(() => {
+          throw new ImageError(`${full} does not exist.`);
+        });
+        return { path: full, lists: findLists(text) };
+      }),
+  );
+
+  server.registerTool(
+    'apply_change',
+    {
+      title: 'Apply an accepted change',
+      description:
+        'Replace a range of lines in an article with new markdown, as one edit that undo_change can reverse. Only call it ' +
+        'after the user has accepted the change you showed them. Give the exact current text of those lines as original: ' +
+        'if the article no longer reads that way, nothing is changed and the error shows what the lines say now.',
+      inputSchema: z.object({
+        path: z.string().describe('The article, a .md or .markdown file'),
+        startLine: z.number().int().min(1).describe('First line to replace, 1-based'),
+        endLine: z.number().int().min(1).describe('Last line to replace, inclusive'),
+        original: z.string().describe('Exactly what those lines say now'),
+        replacement: z.string().describe('The new markdown; an empty string deletes the lines'),
+      }),
+      annotations: { readOnlyHint: false, destructiveHint: true, idempotentHint: false, openWorldHint: false },
+    },
+    (args) => run(async () => ({ ...(await changes.apply(args)) })),
+  );
+
+  server.registerTool(
+    'undo_change',
+    {
+      title: 'Undo the last change',
+      description:
+        'Reverse the last apply_change on an article, putting the original lines back where the new text still stands, ' +
+        'even if other parts of the file were edited since. Call it again to undo earlier changes, one at a time. If the ' +
+        'new text itself was edited, it refuses and changes nothing.',
+      inputSchema: z.object({ path: z.string().describe('The article, a .md or .markdown file') }),
+      annotations: { readOnlyHint: false, destructiveHint: true, idempotentHint: false, openWorldHint: false },
+    },
+    ({ path }) => run(async () => ({ ...(await changes.undo({ path })) })),
   );
 
   return server;

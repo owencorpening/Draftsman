@@ -39,7 +39,7 @@ async function serverTools(): Promise<string[]> {
 
 describe('skills', () => {
   it('ship one per job built so far', () => {
-    expect(skills.map((s) => s.dir).sort()).toEqual(['images', 'pull-quotes', 'tables']);
+    expect(skills.map((s) => s.dir).sort()).toEqual(['images', 'lists', 'pull-quotes', 'tables']);
   });
 
   for (const s of skills) {

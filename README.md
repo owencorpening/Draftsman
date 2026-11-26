@@ -17,6 +17,8 @@ It is a local [MCP](https://modelcontextprotocol.io) server. It works with any A
 - `get_criteria` gives the AI your rules for picking pull quotes.
 - `render_pullquote` turns a sentence from the article into a styled image placed after its paragraph. The quote must be word for word from one paragraph; anything else is refused. It can also turn an existing blockquote into the same kind of image.
 - `find_blockquotes` lists the blockquotes in an article.
+- `find_lists` lists the bullet and numbered lists, so the AI can spot ones that are really a table, an argument or a paragraph, judged by your criteria.
+- `apply_change` makes one accepted change, refusing if the article changed since the AI read it. `undo_change` reverses the last one, and can go back further one at a time. The history is kept in Draftsman's cache folder, not beside your article.
 - A renderer that turns an HTML template into a PNG with your installed Chrome or Edge.
 
 ## Styles
@@ -31,7 +33,7 @@ A style's fonts are files beside it, embedded when rendering, so a figure looks 
 
 ## Criteria
 
-What makes a good pull quote is up to you. Draftsman ships a sample in [criteria/pullquotes.md](criteria/pullquotes.md); copy it to `.draftsman/criteria/pullquotes.md` in your project and edit it, or name another file in the config as `"criteria": { "pullquotes": "path/to/file.md" }`. The AI reads it through `get_criteria` before it suggests quotes.
+What makes a good pull quote, and when a list should be something else, is up to you. Draftsman ships samples in [criteria/](criteria/): `pullquotes.md` and `lists.md`. Copy one to `.draftsman/criteria/` in your project and edit it, or name another file in the config, like `"criteria": { "lists": "path/to/file.md" }`. The AI reads it through `get_criteria` before it suggests quotes.
 
 A style's `pullquote` section sets the quote's font (`text` or `heading`), size, image width, the large quote mark, the accent color and the longest quote accepted. Every field has a default.
 

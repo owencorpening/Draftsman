@@ -20,7 +20,7 @@ function packedFiles(): string[] {
 describe('npm package', () => {
   it('holds the server, sources, styles, criteria and skills, and nothing from tests', { timeout: 120_000 }, () => {
     const files = packedFiles();
-    for (const f of ['dist/server.js', 'sources/pixabay.json', 'styles/default.json', 'styles/fonts/DejaVuSans.ttf', 'criteria/pullquotes.md', 'skills/images/SKILL.md', 'skills/pull-quotes/SKILL.md', 'skills/tables/SKILL.md', 'package.json', 'README.md']) {
+    for (const f of ['dist/server.js', 'sources/pixabay.json', 'styles/default.json', 'styles/fonts/DejaVuSans.ttf', 'criteria/pullquotes.md', 'criteria/lists.md', 'skills/lists/SKILL.md', 'skills/images/SKILL.md', 'skills/pull-quotes/SKILL.md', 'skills/tables/SKILL.md', 'package.json', 'README.md']) {
       expect(files).toContain(f);
     }
     expect(files.filter((f) => /^(test|src|scripts|\.cache|\.github)\/|fixtures|recordings/.test(f))).toEqual([]);

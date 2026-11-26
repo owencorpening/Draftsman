@@ -10,8 +10,10 @@ import { afterEach, describe, expect, it } from 'vitest';
 import { createServer } from '../src/server.js';
 
 const TOOLS = [
+  'apply_change',
   'check_license',
   'find_blockquotes',
+  'find_lists',
   'find_slots',
   'find_tables',
   'get_criteria',
@@ -21,6 +23,7 @@ const TOOLS = [
   'render_table',
   'renumber_figures',
   'search_images',
+  'undo_change',
 ];
 
 const clients: Client[] = [];

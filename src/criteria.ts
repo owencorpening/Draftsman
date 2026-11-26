@@ -11,7 +11,7 @@ import type { Config } from './sources/load.js';
 
 export const CRITERIA_DIR = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../criteria');
 
-export const CRITERIA_JOBS = ['pullquotes'] as const;
+export const CRITERIA_JOBS = ['pullquotes', 'lists'] as const;
 export type CriteriaJob = (typeof CRITERIA_JOBS)[number];
 
 export class CriteriaError extends Error {}
