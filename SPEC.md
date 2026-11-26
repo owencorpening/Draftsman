@@ -263,7 +263,7 @@ Google Sheets
 - With Google signed in, each rendered table gets a new Google Sheet in the user's Drive holding its data, shared so anyone with the link can view it, and the image links to the sheet.
 - Without Google, or when creating or sharing the sheet fails, the table still becomes an image, unlinked, and the result says why.
 - Tests use recorded responses for the Sheets, Drive and token endpoints. Tokens never appear in files, logs, provenance or tool results.
-- Still to check live: that `drive.file` allows sharing the new sheet with anyone who has the link. That needs a run with the real OAuth client, and stays listed here until it's done.
+- Checked live on 2026-11-25 with the real OAuth client: under `drive.file` alone, Draftsman creates the sheet, fills it, and shares it with anyone who has the link.
 
 Tests: `test/google.test.ts`, `test/no-keys.test.ts`
 
