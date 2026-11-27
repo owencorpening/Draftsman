@@ -66,6 +66,7 @@ Draftsman's case is the whole pass in one place, with licenses checked and recor
 7. **Build a carousel.** From the article's summary block and its images, Draftsman makes a slide deck and a PDF in the portrait size LinkedIn carousels use.
 8. **Check before publishing.** One review lists anything missing: credits, alt text, unpromoted tables, figure numbers out of order, dead links.
 9. **Keep a record.** Every image and figure it makes has a provenance file: what it came from, its license and when.
+10. **Run a whole folder.** Point it at a folder or a file pattern, see the plan for every article first, and let the jobs the user trusts run without asking each time.
 
 ## The AI is the interface
 
@@ -118,6 +119,7 @@ Draftsman works on files on your computer, so it needs an AI app that runs local
 | `renumber_figures` | Put every figure caption in order |
 | `find_lists`, `apply_change`, `undo_change` | List bullet lists with their context, apply an accepted change as one edit, and undo it |
 | `build_carousel` | Make the slide deck and PDF from the summary block and the article's images |
+| `plan_batch`, `summarize_batch` | Dry-run a batch over a folder or file pattern, and report what changed in each file afterward |
 | `review_article` | List every problem the jobs above would catch |
 | `list_setup` | Show which sources, generators, styles and destinations are set up and working |
 
@@ -141,7 +143,8 @@ The image placeholder is a markdown image with a `draftsman:` address, like `![d
 12. Keys never appear in the repo, logs or provenance files. A test scans all of them.
 13. No private repo names appear in the package, README or source. The name check runs in CI.
 14. CI runs the tests on every push, and a tag publishes to both stores.
-15. The author has used it on three real articles and published them.
+15. Batch mode takes a file pattern or a folder, skips dependency, hidden and code folders, shows a dry run before any change, refuses files with uncommitted git changes, and ends with one summary per file. Auto-accept is off by default, with tables on their own switch, and every change it applies unasked is one edit that `undo_change` reverses.
+16. The author has used it on three real articles and published them.
 
 ### Any piece of work is done when
 
@@ -365,6 +368,37 @@ Building
 
 Tests: `test/carousel.test.ts`, `test/skills.test.ts`
 
+### Batch mode and auto-accept: `plan_batch` and `summarize_batch`
+
+Finding the articles
+
+- `plan_batch` takes a folder or a glob (`*`, `**`, `?`, `{a,b}`), relative to the working folder or absolute, and walks the tree for `.md` and `.markdown` files. A single file is also accepted.
+- It skips `node_modules`, every folder whose name starts with a dot, and code folders: `src`, `lib`, `dist`, `build`, `out`, `vendor`, `target`, `coverage`, `__pycache__`, `venv`, `bower_components`. Carousel decks it made (`*-carousel.md`) are skipped too. A skipped folder named in the pattern's fixed part, before any wildcard, is still walked, because the user asked for it.
+- It lists at most 200 articles and says when there were more.
+
+The dry run
+
+- `plan_batch` changes nothing. For each article it lists the work it found: image spots, tables, lists, blockquotes, whether figure numbers are out of order and whether there is a summary block.
+- Each article's git state is checked. An article with uncommitted changes, an untracked article and an article git ignores are refused, listed apart with the reason, and left out of the batch. An article in a folder that isn't under git (or with git not installed) stays in, and the plan says plainly that `undo_change` is then the only way back.
+- The plan includes the auto-accept settings, so the user sees what will run unattended before saying go.
+- It returns a batch id. The plan is kept in Draftsman's cache folder with each article's content hash at planning time.
+
+Auto-accept
+
+- Auto-accept is set per job in `.draftsman/config.json` under `autoAccept`: `pullquotes`, `figures`, `lists`, `images` and `tables`, each `false` unless set. `"autoAccept": true` turns on the first four, never `tables`. It applies only inside a batch run; one article at a time, the skills always ask.
+- Pull quotes, figure numbering and list fixes may run unattended, because each is one edit that `undo_change` reverses. `render_pullquote` and `renumber_figures` now record that edit in the same history `apply_change` uses.
+- Images auto-place only results that pass `check_license`. `place_image` records its edit for `undo_change` too; undo puts the placeholder back and leaves the downloaded file and its provenance in place.
+- Tables need `autoAccept.tables` set on its own, because each table makes a Google Sheet anyone with the link can open. `render_table` records its edit for `undo_change`; undo puts the table back but can't delete the sheet, and says so.
+- The config is checked like the rest: an unknown job name is an error that names it.
+
+The summary
+
+- `summarize_batch` takes the batch id and gives one entry per article: each change made since the plan through a Draftsman tool, with its job and lines, still undoable with `undo_change`; "no changes" when there were none; and a note when the file changed in some other way since the plan.
+
+- A `batch` skill calls `plan_batch`, shows the whole plan and waits for the user to say go, runs each job's skill on each article with that job's auto-accept setting, and ends with `summarize_batch`. Each job skill says what it does when auto-accept is on.
+
+Tests: `test/batch.test.ts`, `test/changes.test.ts`, `test/skills.test.ts`
+
 ## Not in version 1
 
 - A paid tier.
@@ -385,7 +419,7 @@ The wider scope moves the first release to mid-January.
 | Dec 15 | Tables as clickable figures linked to new Google Sheets, and figure numbering |
 | Dec 22 | Pull quotes and blockquotes, skills and plugin packaging, working in VS Code and Claude Code |
 | Dec 29 | Lists and the carousel |
-| Jan 5 | Review, optional destinations and generators, use on three real articles |
+| Jan 5 | Review, batch mode and auto-accept, optional destinations and generators, use on three real articles |
 | Jan 12 | Listing and first release. Release blocker: Google's basic (brand) verification of the Draftsman OAuth client has passed, with its home page, privacy policy and consent screen. LinkedIn post after. |
 
 ## Decisions (Nov 25)
@@ -394,6 +428,7 @@ The wider scope moves the first release to mid-January.
 2. Version 1 promises VS Code and Claude Code. Cursor and the other apps that work are best effort: supported if they run it, but not tested before each release.
 3. Google sign-in uses its own OAuth client, a Desktop app client named Draftsman, published to Production. In Testing, Google ends every sign-in after seven days.
 4. Image search, the license check and the provenance record are built as a separate open-source library inside the Draftsman repo, with its own folder, public interface, tests and README. Draftsman uses it like any other caller, so other tools can use it too, and it could be sold on its own later. It ships with the January release, and the release date doesn't move.
+5. (Nov 27) Batch mode and auto-accept are in version 1. A new tool takes a glob or a folder, walks the tree and lists the markdown articles it would touch, skipping `node_modules`, dot folders and code folders. Auto-accept is a per-job setting in `.draftsman/config.json` that the skills read, off by default. Pull quotes, figure numbering and list fixes may run unattended, since each is one edit that `undo_change` reverses. Images auto-place only results that pass `check_license`. Tables need their own switch, because each one makes a Google Sheet anyone with the link can open. Every batch run starts with a dry run of the whole plan, refuses files with uncommitted git changes (and says plainly when a folder isn't under git), and ends with one summary of what changed in each file. The Jan 12 date doesn't move.
 
 ## Sources
 
