@@ -1,6 +1,9 @@
 name: CI
 
-on: push
+on:
+  push:
+  # Lets the CI fixer (oat-tools/tools/ci-fixer) re-run CI to confirm a fix.
+  workflow_dispatch:
 
 permissions:
   contents: read
