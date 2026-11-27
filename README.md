@@ -1,3 +1,8 @@
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="brand/master/draftsman-wordmark-dark.svg">
+  <img src="brand/master/draftsman-wordmark.svg" alt="Draftsman" width="360">
+</picture>
+
 # Draftsman
 
 Draftsman takes a markdown draft to a publish-ready post. You talk to the AI you already use, and Draftsman does the layout work: images found, licensed and credited, tables turned into figures, pull quotes picked and styled, figures numbered, weak lists fixed and a carousel built from the summary.

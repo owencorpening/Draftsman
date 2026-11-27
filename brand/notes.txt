@@ -1,0 +1,59 @@
+Draftsman — Brand Asset Notes
+===============================
+
+Publishing assistant your AI drives.
+Standalone product.
+
+FOLDERS
+-------
+master/     the three sources everything else is made from
+              draftsman-hero(.svg, -512.png, -1024.png)       3D hero, transparent; -dark on an ink rounded square
+              draftsman-icon(.svg, -dark.svg)                 flat plinth tile, 128 grid
+              draftsman-wordmark(.svg, -dark.svg)             icon + name
+exports/    one file per platform use (see resolution-matrix.md); exports/svg/ holds the vector
+            source of each, so draftsman-export.sh can rebuild the PNG/ICO files on its own
+motion/     short loops of the hero, each a still (.png) and a seamless loop (.mp4)
+icon/ wordmark/ banner/ icon-hero/
+            the earlier kit, unchanged; paths already in use keep working
+
+PLATFORMS
+---------
+Local MCP tool server for VS Code and Claude Code, with a home page and a Google sign-in (brand verification is a release blocker): Marketplace / Open VSX icon, site favicons, the OAuth consent-screen logo, and a square for directory listings.
+
+MOTION
+------
+motion/draftsman-calm.png / .mp4  — On ink: a slow sheen passes over the hero and its brass detail breathes; 6 s loop.
+motion/draftsman-night-spotlight.png / .mp4  — Night on a stone backdrop: two warm uplights sweep slowly; 4 s loop.
+motion/draftsman-night-storm.png / .mp4  — Stormy night: rain at three depths, a double lightning strike and a softer one, neon tracing the brass detail in the product’s light accent, one flicker; 6 s loop.
+motion/draftsman-snow.png / .mp4  — Winter dusk: snow falling at three depths with a slight drift, snow lying on the hero’s top faces and on the ground, the brass detail glowing warm; 6 s loop.
+All 1536×1024 (the cornerstone's night size), H.264, yuv420p, 24 fps, no audio, faststart.
+Every loop is seamless: rain and snow move a whole number of screen heights per loop, lights
+and glows run on whole cycles.
+On a web page: <video autoplay muted loop playsinline poster="draftsman-calm.png" src="draftsman-calm.mp4"></video>
+
+COLOUR
+------
+  Brass light    #D9A93A  Icon face; accent on dark
+  Brass          #B8860B  Icon lip
+  Brass deep     #7A5A07  Accent text on light; light-mode outline
+  Brass pale     #F0CF7A  Dark-mode outline; block top
+  Ink            #1E2226  The D; text on light
+  Limestone      #F4F1EA  Light backgrounds; text on dark
+
+RULES
+-----
+- Stands alone: no parent-brand marks on anything public.
+- The three-quarter type block with its shadow is hero art, for 256 px and up.
+- Draftsman is the one all-brass icon; the D is always ink.
+- Clear space around the icon: one lip height (one eighth of the icon).
+- Small sizes (favicons, toolbar, 16–48 px) use the flat tile; the 3D hero is for 256 px and up.
+
+HOW IT WAS MADE
+---------------
+Drawn in code by the brand kit (project files brand/brand-kit/):
+    python3 gen.py    BRANDDIR draftsman       icon/, wordmark/, banner/, brand sheet
+    python3 heroes.py BRANDDIR draftsman       icon-hero/ (3D hero)
+    python3 assets.py BRANDDIR BRANDDIR draftsman   master/, exports/, notes, matrix, script, licence
+    python3 motion.py BRANDDIR BRANDDIR draftsman   motion/ (needs numpy, scipy, Pillow, ffmpeg)
+Lettering is Source Serif 4 SemiBold and Inter, converted to outlines.
+Made 2026-11-27.
