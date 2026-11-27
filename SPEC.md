@@ -393,6 +393,7 @@ The wider scope moves the first release to mid-January.
 1. The name stays Draftsman, though it now covers more than images. A Marketplace and Open VSX name check comes before the first publish.
 2. Version 1 promises VS Code and Claude Code. Cursor and the other apps that work are best effort: supported if they run it, but not tested before each release.
 3. Google sign-in uses its own OAuth client, a Desktop app client named Draftsman, published to Production. In Testing, Google ends every sign-in after seven days.
+4. Image search, the license check and the provenance record are built as a separate open-source library inside the Draftsman repo, with its own folder, public interface, tests and README. Draftsman uses it like any other caller, so other tools can use it too, and it could be sold on its own later. It ships with the January release, and the release date doesn't move.
 
 ## Sources
 
