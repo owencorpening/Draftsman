@@ -72,12 +72,14 @@ Nothing changes until you say go after the dry run. By default the AI still asks
 To link table images to sheets, sign in once from a terminal:
 
 ```sh
-DRAFTSMAN_GOOGLE_CLIENT_ID=<your OAuth client ID> npx draftsman google-sign-in
+npx draftsman google-sign-in
 ```
 
-It opens Google's consent page in your browser and asks only for permission to manage the files Draftsman creates (`drive.file`), nothing else in your Drive. The sign-in is kept in your system keychain. On Ubuntu that needs `secret-tool` (`sudo apt install libsecret-tools`). You can also set `DRAFTSMAN_GOOGLE_REFRESH_TOKEN` yourself. The client ID can also go in the config as `"google": { "clientId": "…" }`; it isn't secret.
+It opens Google's consent page in your browser and asks only for permission to manage the files Draftsman creates (`drive.file`), nothing else in your Drive. The sign-in is kept in your system keychain. On Ubuntu that needs `secret-tool` (`sudo apt install libsecret-tools`). You can also set `DRAFTSMAN_GOOGLE_REFRESH_TOKEN` yourself.
 
-Google also requires the OAuth client's secret, even with PKCE. Set `DRAFTSMAN_GOOGLE_CLIENT_SECRET`, or store it in the keychain (`secret-tool store --label="Draftsman Google client secret" service draftsman account google-client-secret`). It never goes in the config or any file.
+From 1.0, the published package has Draftsman's own Google client built in, so you don't need a Google Cloud project of your own. The release workflow writes the client's ID and secret into the package from repository secrets; they are never committed. Google says a desktop app's client secret can't be kept confidential, and PKCE protects each sign-in.
+
+To use your own OAuth client instead (a Desktop app client), or when running from source before 1.0, set `DRAFTSMAN_GOOGLE_CLIENT_ID`, or put the ID in the config as `"google": { "clientId": "…" }`; it isn't secret. Google also requires that client's secret, even with PKCE: set `DRAFTSMAN_GOOGLE_CLIENT_SECRET`, or store it in the keychain (`secret-tool store --label="Draftsman Google client secret" service draftsman account google-client-secret`). Your secret never goes in the config or any file. Either of these overrides the built-in client.
 
 ## Image sources
 
