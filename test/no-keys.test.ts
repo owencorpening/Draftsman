@@ -155,7 +155,11 @@ describe('keys never leak', () => {
 
     const hits: string[] = [];
     for (const file of files) {
-      const text = readFileSync(file).toString('latin1');
+      const bytes = readFileSync(file);
+      // Binary files (images, video, fonts) are skipped: compressed data can
+      // match a key's shape by chance. Same test git uses: a NUL byte early on.
+      if (bytes.subarray(0, 8000).includes(0)) continue;
+      const text = bytes.toString('latin1');
       if (KEY_SHAPES.some((shape) => shape.test(text))) hits.push(`${file}: something shaped like a key`);
       if (realKeys.some((k) => text.includes(k))) hits.push(`${file}: a key from this environment`);
     }
