@@ -11,9 +11,10 @@ import { McpServer } from '@modelcontextprotocol/server';
 import { serveStdio } from '@modelcontextprotocol/server/stdio';
 import * as z from 'zod';
 
+import { Batch } from './batch.js';
 import { defaultCacheDir } from './cache.js';
 import { Carousel } from './carousel.js';
-import { Changes } from './changes.js';
+import { Changes, type ChangeTool } from './changes.js';
 import { CRITERIA_JOBS, CriteriaError, getCriteria } from './criteria.js';
 import { findSlotsInFile, markSlotInFile } from './files.js';
 import { liveHttp, type Http } from './http.js';
@@ -123,6 +124,24 @@ export function createServer(options: ServerOptions = {}): McpServer {
     ...(options.renderOptions ? { renderOptions: options.renderOptions } : {}),
     ...(options.now ? { now: options.now } : {}),
   });
+  const batch = new Batch({ cwd, cacheDir: options.cacheDir ?? defaultCacheDir(env), config, changes, ...(options.now ? { now: options.now } : {}) });
+
+  /**
+   * Runs a tool that edits an article and records the edit in the undo
+   * history, so undo_change reverses it as one change.
+   */
+  const recorded =
+    (tool: ChangeTool, p: string, body: () => Promise<Record<string, unknown>>) =>
+    async (): Promise<Record<string, unknown>> => {
+      const full = nodePath.resolve(cwd, p);
+      const before = await readFile(full, 'utf8').catch(() => undefined);
+      const out = await body();
+      if (before === undefined) return out;
+      const after = await readFile(full, 'utf8').catch(() => undefined);
+      const undoable = after === undefined ? null : await changes.record(full, before, after, tool);
+      return undoable === null ? out : { ...out, undoable };
+    };
+
   const server = new McpServer({ name: 'draftsman', version: VERSION }, { capabilities: { tools: {} } });
   const scrub = (s: string) => images.scrub(scrubKeys(s, google.secrets));
 
@@ -206,7 +225,8 @@ export function createServer(options: ServerOptions = {}): McpServer {
         'Fill an image spot with an image that passed check_license: download it (or link it, if the source requires) ' +
         'into an images folder beside the article, replace the placeholder on the given line with the image and its alt ' +
         'text, add the credit in the source’s format below it, and save a provenance file beside the image. Refuses any ' +
-        'image that hasn’t passed check_license. If any step fails, the article is left unchanged.',
+        'image that hasn’t passed check_license. If any step fails, the article is left unchanged. The edit is one change ' +
+        'undo_change can reverse.',
       inputSchema: z.object({
         path: z.string().describe('The article, a .md or .markdown file; absolute or relative to the working folder'),
         line: z.number().int().min(1).describe('The line of the placeholder, from find_slots'),
@@ -215,7 +235,8 @@ export function createServer(options: ServerOptions = {}): McpServer {
       }),
       annotations: { readOnlyHint: false, destructiveHint: false, idempotentHint: false, openWorldHint: true },
     },
-    ({ path, line, ref, alt }) => run(async () => ({ ...(await images.place({ path, line, ref, ...(alt ? { alt } : {}) })) }), scrub),
+    ({ path, line, ref, alt }) =>
+      run(recorded('place_image', path, async () => ({ ...(await images.place({ path, line, ref, ...(alt ? { alt } : {}) })) })), scrub),
   );
 
   const tableShape = z.object({
@@ -251,7 +272,8 @@ export function createServer(options: ServerOptions = {}): McpServer {
         'When the user is signed in to Google, the data goes into a new Google Sheet that anyone with the link can view, ' +
         'and the image links to it, so the table shows on platforms that can’t render tables and readers can still use ' +
         'the numbers. Without Google the image goes in unlinked and the result says why. Figure numbers in the whole ' +
-        'article are updated. Write a short caption saying what the table shows.',
+        'article are updated. Write a short caption saying what the table shows. The edit is one change undo_change can ' +
+        'reverse, but undo can’t delete the sheet.',
       inputSchema: z.object({
         path: z.string().describe('The article, a .md or .markdown file'),
         line: z.number().int().min(1).describe('Any line of the table, e.g. its startLine from find_tables'),
@@ -260,7 +282,8 @@ export function createServer(options: ServerOptions = {}): McpServer {
       }),
       annotations: { readOnlyHint: false, destructiveHint: false, idempotentHint: false, openWorldHint: true },
     },
-    ({ path, line, caption, alt }) => run(async () => ({ ...(await tables.render({ path, line, caption, ...(alt ? { alt } : {}) })) }), scrub),
+    ({ path, line, caption, alt }) =>
+      run(recorded('render_table', path, async () => ({ ...(await tables.render({ path, line, caption, ...(alt ? { alt } : {}) })) })), scrub),
   );
 
   server.registerTool(
@@ -270,15 +293,19 @@ export function createServer(options: ServerOptions = {}): McpServer {
       description:
         'Put every figure caption ("Figure N." or "Fig. N:") in order, 1, 2, 3 …, and update references in the text ' +
         '("Figure 3", "Figures 2 and 3", "Figs. 2–4") so they still point at the same figures. Use after adding, moving or ' +
-        'deleting a figure. References to a figure that no longer exists are left alone and listed under problems.',
+        'deleting a figure. References to a figure that no longer exists are left alone and listed under problems. The ' +
+        'renumbering is one change undo_change can reverse.',
       inputSchema: z.object({ path: z.string().describe('The article, a .md or .markdown file') }),
       annotations: { readOnlyHint: false, destructiveHint: false, idempotentHint: true, openWorldHint: false },
     },
     ({ path }) =>
-      run(async () => {
-        const { text: _text, ...r } = await tables.renumber(path);
-        return { ...r };
-      }, scrub),
+      run(
+        recorded('renumber_figures', path, async () => {
+          const { text: _text, ...r } = await tables.renumber(path);
+          return { ...r };
+        }),
+        scrub,
+      ),
   );
 
   server.registerTool(
@@ -320,7 +347,8 @@ export function createServer(options: ServerOptions = {}): McpServer {
         'quote marks and dashes may differ. Anything else is refused, including an ellipsis standing for cut words, ' +
         'and the error says where it stops matching. Give the line when the same words appear twice. The alt text is ' +
         'the quote. Only place quotes the user has chosen. To style an existing blockquote instead, leave out the quote ' +
-        'and give the blockquote’s line from find_blockquotes: the blockquote is replaced by its image.',
+        'and give the blockquote’s line from find_blockquotes: the blockquote is replaced by its image. The edit is one ' +
+        'change undo_change can reverse.',
       inputSchema: z.object({
         path: z.string().describe('The article, a .md or .markdown file'),
         quote: z.string().min(1).optional().describe('The exact words, copied from one paragraph; leave out to style a blockquote'),
@@ -329,7 +357,11 @@ export function createServer(options: ServerOptions = {}): McpServer {
       annotations: { readOnlyHint: false, destructiveHint: false, idempotentHint: false, openWorldHint: false },
     },
     ({ path, quote, line }) =>
-      run(async () => ({ ...(await pullquotes.render({ path, ...(quote !== undefined ? { quote } : {}), ...(line !== undefined ? { line } : {}) })) })),
+      run(
+        recorded('render_pullquote', path, async () => ({
+          ...(await pullquotes.render({ path, ...(quote !== undefined ? { quote } : {}), ...(line !== undefined ? { line } : {}) })),
+        })),
+      ),
   );
 
   server.registerTool(
@@ -379,7 +411,8 @@ export function createServer(options: ServerOptions = {}): McpServer {
     {
       title: 'Undo the last change',
       description:
-        'Reverse the last apply_change on an article, putting the original lines back where the new text still stands, ' +
+        'Reverse the last change on an article made by apply_change, place_image, render_table, render_pullquote or ' +
+        'renumber_figures, putting the original lines back where the new text still stands, ' +
         'even if other parts of the file were edited since. Call it again to undo earlier changes, one at a time. If the ' +
         'new text itself was edited, it refuses and changes nothing.',
       inputSchema: z.object({ path: z.string().describe('The article, a .md or .markdown file') }),
@@ -407,6 +440,37 @@ export function createServer(options: ServerOptions = {}): McpServer {
     },
     ({ path, link, fromArticle }) =>
       run(async () => ({ ...(await carousel.build({ path, ...(link ? { link } : {}), ...(fromArticle ? { fromArticle } : {}) })) })),
+  );
+
+  server.registerTool(
+    'plan_batch',
+    {
+      title: 'Plan a batch',
+      description:
+        'The dry run that starts every batch. Find the markdown articles under a folder or glob (like "posts" or ' +
+        '"posts/**/*.md"), skipping node_modules, dot folders, code folders (src, lib, dist, build …) and carousel decks, and ' +
+        'list for each one the work it holds: image spots, tables, lists, blockquotes, figure numbers out of order and ' +
+        'whether it has a summary block. Articles with uncommitted git changes, untracked or ignored by git are refused ' +
+        'and listed apart. Also returns the user’s auto-accept settings per job and any warnings, such as a folder not ' +
+        'under git. Changes nothing. Show the whole plan to the user and wait for them to say go before changing anything.',
+      inputSchema: z.object({ target: z.string().min(1).describe('A folder, a markdown file or a glob, absolute or relative to the working folder') }),
+      annotations: { readOnlyHint: true, openWorldHint: false },
+    },
+    ({ target }) => run(async () => ({ ...(await batch.plan({ target })) })),
+  );
+
+  server.registerTool(
+    'summarize_batch',
+    {
+      title: 'Summarize a batch',
+      description:
+        'End a batch: one entry per article in the plan, listing each change made since plan_batch through Draftsman’s ' +
+        'tools (which tool, where, how many lines), "No changes." when there were none, and a note when a file changed some ' +
+        'other way. Also repeats the articles the plan refused. Show it to the user as the batch’s last step.',
+      inputSchema: z.object({ batch: z.string().min(1).describe('The batch id from plan_batch') }),
+      annotations: { readOnlyHint: true, openWorldHint: false },
+    },
+    ({ batch: id }) => run(async () => ({ ...(await batch.summarize({ batch: id })) })),
   );
 
   return server;

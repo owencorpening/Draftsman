@@ -20,10 +20,12 @@ const TOOLS = [
   'get_criteria',
   'mark_slot',
   'place_image',
+  'plan_batch',
   'render_pullquote',
   'render_table',
   'renumber_figures',
   'search_images',
+  'summarize_batch',
   'undo_change',
 ];
 
@@ -42,7 +44,8 @@ async function tempArticle(text: string): Promise<string> {
 describe('MCP server', () => {
   async function connect(): Promise<Client> {
     const [clientSide, serverSide] = InMemoryTransport.createLinkedPair();
-    await createServer().connect(serverSide);
+    // A throwaway cache, so the undo history renumber_figures records never lands in the real one.
+    await createServer({ cacheDir: await mkdtemp(path.join(tmpdir(), 'draftsman-cache-')) }).connect(serverSide);
     const client = new Client({ name: 'test', version: '0.0.0' });
     await client.connect(clientSide);
     clients.push(client);

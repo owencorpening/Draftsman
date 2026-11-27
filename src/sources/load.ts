@@ -95,8 +95,41 @@ export const Config = z.strictObject({
       summaryHeadings: z.array(z.string().min(1)).optional(),
     })
     .default({}),
+  /**
+   * Jobs a batch run may do without asking, each off unless set. true turns on
+   * pullquotes, figures, lists and images; tables only ever by name, because
+   * each one makes a Google Sheet anyone with the link can open.
+   */
+  autoAccept: z
+    .union([
+      z.boolean(),
+      z.strictObject({
+        pullquotes: z.boolean().optional(),
+        figures: z.boolean().optional(),
+        lists: z.boolean().optional(),
+        images: z.boolean().optional(),
+        tables: z.boolean().optional(),
+      }),
+    ])
+    .default(false),
 });
 export type Config = z.infer<typeof Config>;
+
+export const AUTO_ACCEPT_JOBS = ['pullquotes', 'figures', 'lists', 'images', 'tables'] as const;
+export type AutoAccept = Record<(typeof AUTO_ACCEPT_JOBS)[number], boolean>;
+
+/** The config's autoAccept, spelled out per job. */
+export function autoAcceptSettings(config: Pick<Config, 'autoAccept'>): AutoAccept {
+  const a = config.autoAccept;
+  if (typeof a === 'boolean') return { pullquotes: a, figures: a, lists: a, images: a, tables: false };
+  return {
+    pullquotes: a.pullquotes ?? false,
+    figures: a.figures ?? false,
+    lists: a.lists ?? false,
+    images: a.images ?? false,
+    tables: a.tables ?? false,
+  };
+}
 
 /** The user's settings: .draftsman/config.json in the working folder, if there is one. */
 export function loadConfig(cwd: string): { config: Config; file?: string } {

@@ -22,3 +22,7 @@ A list that's really a table, an argument or a paragraph reads worse than what i
 - A list that becomes a table can then go through the tables skill to become a figure. Offer it, don't do it unasked.
 - Line numbers move after each change. Call `find_lists` again before the next one.
 - If the user asks to undo, call `undo_change`; call it again for each earlier change they want reversed.
+
+## In a batch with lists on auto-accept
+
+Only inside a batch run, and only when `plan_batch` shows `lists` on: skip steps 3 and 4. Apply each change the criteria clearly call for, and list each one as before and after in your report. When a list is a close call, leave it alone and mention it instead.

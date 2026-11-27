@@ -39,7 +39,7 @@ async function serverTools(): Promise<string[]> {
 
 describe('skills', () => {
   it('ship one per job built so far', () => {
-    expect(skills.map((s) => s.dir).sort()).toEqual(['carousel', 'images', 'lists', 'pull-quotes', 'tables']);
+    expect(skills.map((s) => s.dir).sort()).toEqual(['batch', 'carousel', 'images', 'lists', 'pull-quotes', 'tables']);
   });
 
   for (const s of skills) {
@@ -74,5 +74,17 @@ describe('skills', () => {
     expect(by['images']).toMatch(/Never offer or place an image that hasn't passed/);
     expect(by['pull-quotes']).toMatch(/Call `get_criteria`/);
     expect(by['pull-quotes']).toMatch(/Never place a pull quote the user hasn't picked/);
+  });
+
+  it('keep batches to a dry run first, a summary last, and auto-accept as the config says', () => {
+    const by = Object.fromEntries(skills.map((s) => [s.dir, s.body]));
+    expect(by['batch']).toMatch(/1\. Call `plan_batch`/);
+    expect(by['batch']).toMatch(/wait for the user to say go\. Change nothing before they do/);
+    expect(by['batch']).toMatch(/call `summarize_batch`/);
+    expect(by['batch']).toMatch(/`autoAccept: true` never turns it on/);
+    expect(by['batch']).toMatch(/only the config turns it on/);
+    for (const job of ['images', 'tables', 'pull-quotes', 'lists']) expect(by[job], job).toMatch(/## In a batch .*auto-accept/);
+    expect(by['images']).toMatch(/from those that passed `check_license`/);
+    expect(by['tables']).toMatch(/if `tables` is off, show the captions and wait as usual/);
   });
 });

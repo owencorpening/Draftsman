@@ -18,8 +18,9 @@ It is a local [MCP](https://modelcontextprotocol.io) server. It works with any A
 - `render_pullquote` turns a sentence from the article into a styled image placed after its paragraph. The quote must be word for word from one paragraph; anything else is refused. It can also turn an existing blockquote into the same kind of image.
 - `find_blockquotes` lists the blockquotes in an article.
 - `find_lists` lists the bullet and numbered lists, so the AI can spot ones that are really a table, an argument or a paragraph, judged by your criteria.
-- `apply_change` makes one accepted change, refusing if the article changed since the AI read it. `undo_change` reverses the last one, and can go back further one at a time. The history is kept in Draftsman's cache folder, not beside your article.
+- `apply_change` makes one accepted change, refusing if the article changed since the AI read it. `undo_change` reverses the last one, and can go back further one at a time. Placing an image, rendering a table or pull quote and renumbering figures are each one change it can reverse too. The history is kept in Draftsman's cache folder, not beside your article.
 - `build_carousel` makes a portrait slide deck (Marp markdown) and a PDF, 1080 by 1350 a page as LinkedIn carousels use, from the article's summary block and its images. Each slide with a photo carries the photo's credit.
+- `plan_batch` dry-runs a batch over a folder or file pattern, and `summarize_batch` reports what changed in each article afterward. See [Batches and auto-accept](#batches-and-auto-accept).
 - A renderer that turns an HTML template into a PNG or PDF with your installed Chrome or Edge.
 
 ## Styles
@@ -49,6 +50,22 @@ The slides use your Draftsman style. To use your own Marp theme instead, or othe
 ```
 
 Your theme needs a `/* @theme name */` comment and must make slides 1080 by 1350 (for example with `/* @size 1080x1350 1080px 1350px */`).
+
+## Batches and auto-accept
+
+Ask your AI to run Draftsman over a folder (`posts`) or a file pattern (`posts/**/*.md`). It works in three steps:
+
+1. **A dry run.** `plan_batch` lists every markdown article it found and the work in each (image spots, tables, lists, blockquotes, figures out of order, a summary block), and changes nothing. It skips `node_modules`, folders starting with a dot, code folders (`src`, `lib`, `dist`, `build`, `out`, `vendor`, `target`, `coverage`, `__pycache__`, `venv`, `bower_components`) and the carousel decks Draftsman made. Naming a skipped folder before any wildcard, like `posts/.drafts/*.md`, walks it anyway.
+2. **Git check.** An article with uncommitted changes, one git doesn't track yet and one git ignores are refused, so the batch's changes always stand apart from yours. Commit first. A folder that isn't under git is allowed, and the plan says so plainly: `undo_change` is then the only way back.
+3. **A summary.** `summarize_batch` ends the run with one entry per article: each change made, by which tool, or "No changes."
+
+Nothing changes until you say go after the dry run. By default the AI still asks you before every change, as it does for one article. To let some jobs run without asking during a batch, turn them on in `.draftsman/config.json`:
+
+```json
+{ "autoAccept": { "pullquotes": true, "figures": true, "lists": true, "images": true } }
+```
+
+`"autoAccept": true` turns those four on. Tables have their own switch, `"tables": true`, and `true` alone never turns it on, because each table makes a Google Sheet that anyone with the link can open. Images placed without asking are always ones that passed the license check. Every change made without asking is one edit that `undo_change` reverses; undoing a table can't delete its sheet, so remove that in Drive. Auto-accept only applies inside a batch.
 
 ## Google Sheets for tables
 

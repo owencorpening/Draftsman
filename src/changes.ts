@@ -11,8 +11,13 @@ import path from 'node:path';
 import { ImageError } from './images.js';
 import { formatDoc, parseDoc } from './markdown.js';
 
-interface Entry {
+/** The tools whose edits go in the undo history. */
+export type ChangeTool = 'apply_change' | 'render_pullquote' | 'renumber_figures' | 'place_image' | 'render_table';
+
+export interface Entry {
   at: string;
+  /** The tool that made the change; histories written before this field are apply_change. */
+  tool?: ChangeTool;
   /** 0-based line where the change was made. */
   start: number;
   original: string[];
@@ -29,6 +34,14 @@ const linesOf = (s: string): string[] => {
 };
 
 const same = (a: string[], b: string[]) => a.length === b.length && a.every((l, i) => l === b[i]);
+
+/** What undoing leaves behind, by tool, so the user isn't surprised. */
+const UNDO_NOTES: Partial<Record<ChangeTool, string>> = {
+  place_image: 'The image file and its provenance file are still in the images folder; delete them if you no longer want them.',
+  render_pullquote: 'The pull quote image and its provenance file are still in the images folder; delete them if you no longer want them.',
+  render_table:
+    'The table is back, but the Google Sheet made for it is still in your Drive and anyone with its link can still open it. Delete it in Drive if you no longer want it. The image file is still in the images folder.',
+};
 
 export class Changes {
   constructor(private readonly o: { cwd: string; cacheDir: string; now?: () => Date }) {}
@@ -81,7 +94,8 @@ export class Changes {
     }
     const replacement = linesOf(args.replacement);
     const entry: Entry = {
-      at: (this.o.now ?? (() => new Date()))().toISOString(),
+      at: this.now(),
+      tool: 'apply_change',
       start: startLine - 1,
       original: current,
       replacement,
@@ -101,6 +115,46 @@ export class Changes {
       inserted: replacement.length,
       undoable: history.length + 1,
     };
+  }
+
+  private now(): string {
+    return (this.o.now ?? (() => new Date()))().toISOString();
+  }
+
+  /**
+   * Records an edit another tool already made to an article, as one change
+   * undo_change can reverse: the span from the first to the last line that
+   * differs. Returns how many changes can now be undone, or null if the text
+   * didn't change.
+   */
+  async record(fullPath: string, beforeText: string, afterText: string, tool: ChangeTool): Promise<number | null> {
+    if (beforeText === afterText) return null;
+    const full = path.resolve(fullPath);
+    const a = parseDoc(beforeText).lines;
+    const b = parseDoc(afterText).lines;
+    let p = 0;
+    while (p < a.length && p < b.length && a[p] === b[p]) p++;
+    let q = 0;
+    while (q < a.length - p && q < b.length - p && a[a.length - 1 - q] === b[b.length - 1 - q]) q++;
+    // Only the line ending or final newline changed: nothing undo can put back by lines.
+    if (p === a.length && p === b.length) return null;
+    const entry: Entry = {
+      at: this.now(),
+      tool,
+      start: p,
+      original: a.slice(p, a.length - q),
+      replacement: b.slice(p, b.length - q),
+      before: a[p - 1] ?? null,
+      after: a[a.length - q] ?? null,
+    };
+    const history = await this.history(full);
+    await this.save(full, [...history, entry]);
+    return history.length + 1;
+  }
+
+  /** The changes still in an article's history, oldest first. */
+  async list(fullPath: string): Promise<Entry[]> {
+    return this.history(path.resolve(fullPath));
   }
 
   /** Reverses the last change on the article, where its new text still stands. */
@@ -131,12 +185,15 @@ export class Changes {
     lines.splice(at, n, ...entry.original);
     await writeFile(full, formatDoc(doc));
     await this.save(full, history.slice(0, -1));
+    const note = UNDO_NOTES[entry.tool ?? 'apply_change'];
     return {
       path: full,
+      tool: entry.tool ?? 'apply_change',
       startLine: at + 1,
       endLine: at + entry.original.length,
       restored: entry.original.length,
       undoable: history.length - 1,
+      ...(note ? { note } : {}),
     };
   }
 }

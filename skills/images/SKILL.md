@@ -22,3 +22,8 @@ Draftsman marks an image spot as a markdown image whose link is `draftsman:pendi
 - No image goes in unless `check_license` passed it in this session. If none pass, say so and suggest a different search; don't lower the bar.
 - If a source is skipped for lack of a key, pass on the message about how to add one.
 - Line numbers change after each placement. Call `find_slots` again before placing the next one.
+- Each placement is one edit that `undo_change` reverses; undo puts the spot back and leaves the downloaded file in the images folder.
+
+## In a batch with images on auto-accept
+
+Only inside a batch run, and only when `plan_batch` shows `images` on: skip steps 4 and 5. Pick the candidate that best fits the spot from those that passed `check_license`, place it, and list it with its source and credit in your report. If none pass, leave the spot empty and say so.

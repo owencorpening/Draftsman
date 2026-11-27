@@ -19,3 +19,11 @@ Many platforms can't show a markdown table. Draftsman turns each one into a styl
 
 - Don't write "Figure N." in the caption; Draftsman numbers it.
 - Alt text names the columns and row count by default. Give better alt text when the table's point can be said in a sentence.
+- Each `render_table` and each `renumber_figures` is one edit that `undo_change` reverses. Undoing a table puts it back but can't delete its Google Sheet; tell the user it's still in their Drive.
+
+## In a batch on auto-accept
+
+Only inside a batch run:
+
+- When `plan_batch` shows `figures` on, call `renumber_figures` on each article whose figures are out of order, without asking, and report what changed.
+- When it shows `tables` on, write each caption and render each table without waiting for the user, and list each caption and sheet link in your report. Tables have their own switch because every one makes a Google Sheet anyone with the link can open; if `tables` is off, show the captions and wait as usual, even when other jobs are on.

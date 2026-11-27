@@ -75,3 +75,44 @@ describe('undo_change', () => {
     expect(await readFile(article, 'utf8')).toBe(ARTICLE);
   });
 });
+
+describe('edits other tools make', () => {
+  it('are recorded as one change from the first to the last line that differs, and undo reverses them', async () => {
+    const { changes, article } = await setup();
+    const after = ARTICLE.replace('Intro.', 'Intro, now longer.').replace('After.', '![chart](images/c.png)\n\n*Figure 1. Chart.*\n\nAfter.');
+    await writeFile(article, after);
+    expect(await changes.record(article, ARTICLE, after, 'render_table')).toBe(1);
+    const [entry] = await changes.list(article);
+    expect(entry).toMatchObject({ tool: 'render_table', start: 2, original: ARTICLE.split('\n').slice(2, 6) });
+    const u = await changes.undo({ path: 'post.md' });
+    expect(u).toMatchObject({ tool: 'render_table', undoable: 0, note: expect.stringMatching(/Google Sheet .* is still in your Drive/) });
+    expect(await readFile(article, 'utf8')).toBe(ARTICLE);
+  });
+
+  it('record a pure insertion and a pure deletion so undo can find the spot again', async () => {
+    const { changes, article } = await setup();
+    const inserted = ARTICLE.replace('Intro.\n', 'Intro.\n\n![quote](images/q.png)\n');
+    await writeFile(article, inserted);
+    await changes.record(article, ARTICLE, inserted, 'render_pullquote');
+    expect(await changes.undo({ path: 'post.md' })).toMatchObject({ tool: 'render_pullquote', note: expect.stringMatching(/pull quote image/) });
+    expect(await readFile(article, 'utf8')).toBe(ARTICLE);
+
+    const deleted = ARTICLE.replace('- Indus: 6 months\n', '');
+    await writeFile(article, deleted);
+    await changes.record(article, ARTICLE, deleted, 'apply_change');
+    await changes.undo({ path: 'post.md' });
+    expect(await readFile(article, 'utf8')).toBe(ARTICLE);
+  });
+
+  it('record nothing when the text is the same', async () => {
+    const { changes, article } = await setup();
+    expect(await changes.record(article, ARTICLE, ARTICLE, 'renumber_figures')).toBeNull();
+    expect(await changes.list(article)).toEqual([]);
+  });
+
+  it('read histories written before the tool field as apply_change', async () => {
+    const { changes } = await setup();
+    await changes.apply({ path: 'post.md', startLine: 3, endLine: 3, original: 'Intro.', replacement: 'Hi.' });
+    expect(await changes.undo({ path: 'post.md' })).toMatchObject({ tool: 'apply_change' });
+  });
+});
